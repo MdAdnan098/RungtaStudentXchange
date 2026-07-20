@@ -26,9 +26,8 @@ const CommunitySection = () => {
       <PageContainer size="md">
         <div className="card-padded !rounded-2xl !p-6 sm:!p-7">
           <h2 id="community-heading" className="text-h4 leading-snug">
-            ❤️ Apne Rungta Students Ke Liye Kuch Zaruri Baatein
-          </h2>
-
+            ❤️ Sabhi Students Ke Liye Kuch Zaruri Baatein
+          </h2>          
           <ul className="mt-5 space-y-3.5 sm:mt-6">
             {COMMUNITY_TIPS.map((tip) => {
               const [icon, ...rest] = tip.split(" ");
