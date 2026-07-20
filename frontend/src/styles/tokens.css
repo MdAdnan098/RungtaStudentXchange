@@ -1,0 +1,123 @@
+/**
+ * Theme tokens as CSS custom properties.
+ *
+ * Values are "R G B" triples (no rgb() wrapper) so tailwind.config.js
+ * can compose them as `rgb(var(--x) / <alpha-value>)` and get working
+ * opacity modifiers (bg-primary/10, etc).
+ *
+ * :root holds the light theme (default). .dark overrides the same
+ * variable names — nothing else needs to know which theme is active,
+ * every component just reads e.g. `bg-surface` and gets the right
+ * value for free.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces — background stays soft (slate-50), not pure white, so
+     white cards actually read as "elevated" against it. */
+  --color-bg: 248 250 252; /* slate-50 */
+  --color-bg-subtle: 241 245 249; /* slate-100 */
+  --color-surface: 255 255 255; /* card / elevated surface */
+  --color-surface-hover: 248 250 252;
+  --color-surface-raised: 255 255 255; /* modals, popovers */
+
+  --color-border: 226 232 240; /* slate-200 */
+  --color-border-strong: 203 213 225; /* slate-300 */
+
+  --color-text: 15 23 42; /* slate-900 */
+  --color-text-secondary: 51 65 85; /* slate-700 */
+  --color-text-muted: 100 116 139; /* slate-500 */
+  --color-text-inverse: 255 255 255;
+
+  /* Brand — Deep Indigo */
+  --color-primary: 79 70 229; /* indigo-600 */
+  --color-primary-hover: 67 56 202; /* indigo-700 */
+  --color-primary-active: 55 48 163; /* indigo-800 */
+  --color-primary-subtle: 238 242 255; /* indigo-50 */
+  --color-primary-subtle-text: 67 56 202; /* indigo-700 */
+
+  /* Accent — Emerald */
+  --color-accent: 5 150 105; /* emerald-600 */
+  --color-accent-hover: 4 120 87; /* emerald-700 */
+  --color-accent-subtle: 209 250 229; /* emerald-100 */
+
+  /* Semantic states */
+  --color-success: 22 163 74; /* green-600 */
+  --color-success-subtle: 220 252 231; /* green-100 */
+  --color-success-text: 21 128 61; /* green-700 */
+
+  --color-warning: 217 119 6; /* amber-600 */
+  --color-warning-subtle: 254 243 199; /* amber-100 */
+  --color-warning-text: 180 83 9; /* amber-700 */
+
+  --color-danger: 220 38 38; /* red-600 */
+  --color-danger-hover: 185 28 28; /* red-700 */
+  --color-danger-subtle: 254 226 226; /* red-100 */
+  --color-danger-text: 185 28 28; /* red-700 */
+
+  --color-focus-ring: 99 102 241; /* indigo-500 */
+
+  /* Elevation. Light mode: real drop shadows work fine. */
+  --shadow-color: 15 23 42; /* slate-900, used at low alpha */
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Deliberately NOT pure black — a soft charcoal that stays
+     comfortable for long reading sessions (listings, chats) than
+     #000. Four distinct steps (bg → nav/footer → surface →
+     surface-hover) give real visual separation between layers instead
+     of everything reading as one flat slab. */
+  --color-bg: 17 18 22; /* soft charcoal, ~#111216 */
+  --color-bg-subtle: 22 23 28; /* navbar / footer — one step up from page */
+  --color-surface: 32 33 40; /* cards — a further step up, reads as elevated.
+    Nudged a bit lighter than before so cards separate more clearly
+    from the page background without changing any size/spacing. */
+  --color-surface-hover: 40 41 49;
+  --color-surface-raised: 44 45 53; /* modals/popovers sit above cards */
+
+  --color-border: 54 55 64;
+  --color-border-strong: 72 73 84;
+
+  --color-text: 237 237 240; /* soft off-white, not stark */
+  --color-text-secondary: 199 200 206;
+  --color-text-muted: 142 144 154;
+  --color-text-inverse: 17 18 22;
+
+  /* Brand color moves lighter so it keeps AA contrast on a dark bg,
+     but is now reserved for buttons / active nav / links / important
+     actions — see components using `primary-subtle`, which is kept
+     low-key on purpose so it doesn't compete for attention everywhere. */
+  --color-primary: 129 140 248; /* indigo-400 */
+  --color-primary-hover: 165 180 252; /* indigo-300 */
+  --color-primary-active: 199 210 254; /* indigo-200 */
+  --color-primary-subtle: 41 40 58; /* muted tinted chip bg, low-key */
+  --color-primary-subtle-text: 186 194 253;
+
+  --color-accent: 52 211 153; /* emerald-400 */
+  --color-accent-hover: 110 231 183; /* emerald-300 */
+  --color-accent-subtle: 22 46 40;
+
+  --color-success: 74 222 128; /* green-400 */
+  --color-success-subtle: 20 83 45; /* green-900 */
+  --color-success-text: 134 239 172; /* green-300 */
+
+  --color-warning: 251 191 36; /* amber-400 */
+  --color-warning-subtle: 120 53 15; /* amber-900 */
+  --color-warning-text: 252 211 77; /* amber-300 */
+
+  --color-danger: 248 113 113; /* red-400 */
+  --color-danger-hover: 252 165 165; /* red-300 */
+  --color-danger-subtle: 127 29 29; /* red-900 */
+  --color-danger-text: 252 165 165; /* red-300 */
+
+  --color-focus-ring: 165 180 252; /* indigo-300, brighter for dark bg */
+
+  /* Elevation. On a dark background a black drop shadow all but
+     disappears and just looks muddy, so shadow alpha stays very low
+     here — cards separate from the page mainly via --color-surface
+     being a step lighter than --color-bg, plus a hairline border. */
+  --shadow-color: 0 0 0;
+}

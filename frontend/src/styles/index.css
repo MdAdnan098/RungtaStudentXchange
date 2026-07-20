@@ -1,0 +1,327 @@
+@import "./tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Base layer — resets, defaults, accessibility
+   ========================================================================== */
+@layer base {
+  html {
+    @apply antialiased;
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    /* Off-canvas panels (mobile nav, filter drawer, slide-overs) are
+       positioned fixed + translated fully off-screen when closed.
+       Some mobile browsers still count that off-screen box toward the
+       document's scrollable width, letting users swipe/scroll
+       sideways into empty space. Clipping horizontal overflow at the
+       root is the standard fix — it never affects intended vertical
+       scrolling or any in-flow layout. */
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-text font-sans text-body transition-colors duration-base;
+    width: 100%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display text-text;
+  }
+
+  /* Visible keyboard focus everywhere, but only for keyboard users —
+     :focus-visible skips the ring on mouse/touch clicks so it never
+     feels noisy, while still always showing it for Tab navigation. */
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [tabindex]:not([tabindex="-1"]) {
+    outline: none;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [tabindex]:not([tabindex="-1"]):focus-visible {
+    @apply ring-2 ring-ring ring-offset-2 ring-offset-surface rounded-sm;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-text;
+  }
+
+  /* Thin, theme-aware scrollbars instead of the default chrome. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-border-strong)) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-border-strong;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-muted;
+    background-clip: padding-box;
+  }
+
+  /* Respect the user's OS-level motion preference: collapse all
+     animation/transition/scroll timing to near-zero rather than
+     removing it outright (removing it can break logic that waits on
+     a transitionend event). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Components layer — reusable UI tokens
+   These are the shared building blocks every future page/component
+   composes with. No page layout, navigation, or branding lives here —
+   just the design language (buttons, fields, cards, overlays, etc).
+   ========================================================================== */
+@layer components {
+  /* ---- Buttons ------------------------------------------------------- */
+  .btn {
+    @apply inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5
+      text-body-sm font-medium font-sans
+      transition-colors duration-base ease-standard
+      disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-text-inverse
+      hover:bg-primary-hover active:bg-primary-active
+      shadow-xs;
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface text-text border border-border-strong
+      hover:bg-surface-hover active:bg-background-subtle
+      shadow-xs;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-text-secondary
+      hover:bg-surface-hover active:bg-background-subtle;
+  }
+
+  .btn-accent {
+    @apply btn bg-accent text-text-inverse
+      hover:bg-accent-hover
+      shadow-xs;
+  }
+
+  .btn-danger {
+    @apply btn bg-danger text-text-inverse
+      hover:bg-danger-hover
+      shadow-xs;
+  }
+
+  .btn-danger-ghost {
+    @apply btn bg-transparent text-danger-text
+      hover:bg-danger-subtle;
+  }
+
+  /* Size modifiers — defined *after* the color variants above on
+     purpose. Tailwind's @apply inlines declarations directly into
+     each class's compiled CSS rule, so when two same-specificity
+     classes are combined on one element (e.g. `btn-ghost btn-sm`),
+     whichever rule comes later in the stylesheet wins for conflicting
+     properties (padding, font-size). Keeping size modifiers last
+     means `<Component className="btn-ghost btn-sm">` reliably gets
+     the small size, regardless of class order in the JSX. */
+  .btn-sm {
+    @apply px-3 py-1.5 text-caption;
+  }
+
+  .btn-lg {
+    @apply px-5 py-3 text-body;
+  }
+
+  /* Shared "press" micro-interaction for buttons that give tactile
+     feedback on click (Hero CTAs, Seller Card contact buttons,
+     Product Actions). Was previously spelled out identically on 9+
+     individual buttons across 3 files — one definition here means
+     the feel stays in sync everywhere, and a future timing tweak is
+     a one-line change instead of a find-and-replace. Hover shadow
+     still varies per button (some want a bigger lift than others) so
+     that part stays explicit at the call site. */
+  .btn-tactile {
+    @apply transition-all duration-base ease-standard active:scale-[0.98];
+  }
+
+  /* Same idea, tuned for small circular icon-only buttons (Share,
+     Report) which read better with a slightly deeper press. */
+  .btn-tactile-icon {
+    @apply transition-all duration-base ease-standard active:scale-95;
+  }
+
+  /* ---- Form fields ----------------------------------------------------- */
+  .field-label {
+    @apply block text-body-sm font-medium text-text-secondary mb-1.5;
+  }
+
+  .field-hint {
+    @apply text-caption text-text-muted mt-1.5;
+  }
+
+  .field-error {
+    @apply text-caption text-danger-text mt-1.5;
+  }
+
+  .input,
+  .textarea,
+  .select {
+    @apply w-full rounded-lg border border-border-strong bg-surface text-text
+      text-body-sm placeholder:text-text-muted
+      px-3.5 py-2.5
+      transition-colors duration-base ease-standard
+      hover:border-text-muted
+      focus:border-primary focus:ring-2 focus:ring-ring/40
+      disabled:opacity-50 disabled:bg-background-subtle disabled:cursor-not-allowed;
+  }
+
+  .textarea {
+    @apply resize-y min-h-[6rem];
+  }
+
+  .select {
+    @apply pr-9 appearance-none bg-no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+  }
+
+  .input-error {
+    @apply border-danger focus:border-danger focus:ring-danger/30;
+  }
+
+  /* ---- Badges ------------------------------------------------------------ */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1
+      text-overline uppercase font-display;
+  }
+
+  .badge-neutral {
+    @apply badge bg-background-subtle text-text-secondary;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-subtle text-primary-subtle-text;
+  }
+
+  .badge-accent {
+    @apply badge bg-accent-subtle text-accent-hover;
+  }
+
+  .badge-success {
+    @apply badge bg-success-subtle text-success-text;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning-subtle text-warning-text;
+  }
+
+  .badge-danger {
+    @apply badge bg-danger-subtle text-danger-text;
+  }
+
+  /* ---- Cards -------------------------------------------------------------
+     "Slightly elevated": a soft shadow + hairline border in light
+     mode; in dark mode the border does most of the work since shadows
+     barely read on a dark background (see tokens.css). */
+  .card {
+    @apply bg-surface border border-border rounded-xl shadow-card dark:shadow-card-dark
+      transition-shadow duration-base ease-standard;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card-hover hover:border-border-strong dark:hover:shadow-card-hover-dark;
+  }
+
+  .card-padded {
+    @apply card p-5;
+  }
+
+  /* ---- Overlays: modal & popover ------------------------------------------ */
+  .modal-overlay {
+    @apply fixed inset-0 z-overlay bg-gray-950/60 backdrop-blur-[2px];
+  }
+
+  .modal-panel {
+    @apply fixed z-modal bg-surface-raised border border-border
+      rounded-2xl shadow-xl p-6;
+  }
+
+  .popover-panel {
+    @apply z-popover bg-surface-raised border border-border
+      rounded-lg shadow-popover p-2;
+  }
+
+  /* ---- Toasts (react-hot-toast skin — see App.jsx Toaster config) -------- */
+  .toast {
+    @apply bg-surface-raised text-text border border-border
+      rounded-lg shadow-popover text-body-sm px-4 py-3;
+  }
+
+  /* ---- Dividers ------------------------------------------------------------ */
+  .divider {
+    @apply border-t border-border;
+  }
+
+  /* Hides the scrollbar on decorative horizontal-scroll strips (e.g.
+     the hero's student-essentials showcase) while keeping the
+     element natively scrollable via touch/trackpad/wheel. */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

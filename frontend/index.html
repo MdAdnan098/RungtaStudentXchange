@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4F46E5" />
+    <title>RungtaStudentXchange</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      // Applies the correct theme class before React mounts / before
+      // first paint, so switching themes (or loading with a saved
+      // dark-mode preference) never flashes the wrong theme. Mirrors
+      // the exact logic in src/store/themeStore.js +
+      // src/components/theme/ThemeProvider.jsx — update together if
+      // the storage key or shape ever changes.
+      (function () {
+        try {
+          var STORAGE_KEY = "rsx-theme";
+          var stored = localStorage.getItem(STORAGE_KEY);
+          var preference = stored ? JSON.parse(stored).state.theme : "system";
+          var resolved =
+            preference === "system"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light"
+              : preference;
+          if (resolved === "dark") {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {
+          // localStorage unavailable or malformed — fall back silently
+          // to the light theme.
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
