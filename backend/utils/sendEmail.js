@@ -8,15 +8,37 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  socketTimeout: 20000,
 });
 
 export const sendEmail = async ({ to, subject, html }) => {
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to,
-    subject,
-    html,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to,
+      subject,
+      html,
+    });
+
+    console.log("EMAIL SENT:", {
+      messageId: info.messageId,
+      to,
+      subject,
+    });
+
+    return info;
+  } catch (error) {
+    console.error("EMAIL SEND FAILED:", {
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      message: error.message,
+    });
+
+    throw error;
+  }
 };
 
 const OTP_EMAIL_CONTENT = {
