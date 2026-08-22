@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=1280" />
     <meta name="theme-color" content="#4F46E5" />
     <title>RungtaStudentXchange</title>
 
@@ -16,16 +16,18 @@
 
     <script>
       // Applies the correct theme class before React mounts / before
-      // first paint, so switching themes (or loading with a saved
-      // dark-mode preference) never flashes the wrong theme. Mirrors
-      // the exact logic in src/store/themeStore.js +
+      // first paint, so switching themes never flashes the wrong
+      // theme. Reads from sessionStorage (not localStorage) so the
+      // theme always resets to light when the browser is closed and
+      // reopened, but stays consistent during the current session.
+      // Mirrors the exact logic in src/store/themeStore.js +
       // src/components/theme/ThemeProvider.jsx — update together if
       // the storage key or shape ever changes.
       (function () {
         try {
           var STORAGE_KEY = "rsx-theme";
-          var stored = localStorage.getItem(STORAGE_KEY);
-          var preference = stored ? JSON.parse(stored).state.theme : "system";
+          var stored = sessionStorage.getItem(STORAGE_KEY);
+          var preference = stored ? JSON.parse(stored).state.theme : "light";
           var resolved =
             preference === "system"
               ? window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -36,8 +38,8 @@
             document.documentElement.classList.add("dark");
           }
         } catch (e) {
-          // localStorage unavailable or malformed — fall back silently
-          // to the light theme.
+          // sessionStorage unavailable or malformed — fall back
+          // silently to the light theme.
         }
       })();
     </script>

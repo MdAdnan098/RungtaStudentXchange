@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { THEME_STORAGE_KEY } from "@/constants";
 
 /**
@@ -8,18 +8,16 @@ import { THEME_STORAGE_KEY } from "@/constants";
  * "system" resolved against the OS preference at the moment it's
  * computed.
  *
- * Kept as a separate store from authStore (not shoved into it) since
- * theme has nothing to do with auth and should be readable/settable
- * before login, on public pages, etc.
- *
- * The actual DOM side effect (toggling the `dark` class on <html>,
- * listening for OS theme changes) lives in ThemeProvider — this store
- * only holds state. See src/components/theme/ThemeProvider.jsx.
+ * Default is always "light" (not "system") so a device's OS-level
+ * dark mode never determines the initial theme. Stored in
+ * sessionStorage (not localStorage) so a user's manual dark-mode
+ * choice only lasts for the current browser session — closing the
+ * browser and reopening always starts fresh on light.
  */
 export const useThemeStore = create(
   persist(
     (set) => ({
-      theme: "system",
+      theme: "light",
       resolvedTheme: "light",
 
       setTheme: (theme) => set({ theme }),
@@ -32,9 +30,7 @@ export const useThemeStore = create(
     }),
     {
       name: THEME_STORAGE_KEY,
-      // Only persist the preference, not the resolved value — the
-      // resolved value is always recomputed on load so it can react
-      // to OS-level changes even for users on "system".
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({ theme: state.theme }),
     }
   )
