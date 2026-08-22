@@ -20,7 +20,7 @@ const Logo = ({ size = "md", className }) => {
       aria-label="RungtaStudentXchange — go to homepage"
     >
       <img
-        src="/rungta-logo.jpeg"
+        src="/rungta-logo.png"
         alt="Rungta"
         className={cn(
           "object-contain shrink-0",
