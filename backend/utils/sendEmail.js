@@ -1,42 +1,32 @@
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT),
-  secure: Number(process.env.EMAIL_PORT) === 465,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 15000,
-  greetingTimeout: 15000,
-  socketTimeout: 20000,
-});
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 export const sendEmail = async ({ to, subject, html }) => {
   try {
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to,
-      subject,
-      html,
+    const response = await fetch(BREVO_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": process.env.BREVO_API_KEY,
+      },
+      body: JSON.stringify({
+        sender: { email: "rungtastudenthub@gmail.com", name: "RungtaStudentXchange" },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
     });
 
-    console.log("EMAIL SENT:", {
-      messageId: info.messageId,
-      to,
-      subject,
-    });
+    const data = await response.json();
 
-    return info;
+    if (!response.ok) {
+      console.error("EMAIL SEND FAILED:", data);
+      throw new Error(data.message || "Failed to send email");
+    }
+
+    console.log("EMAIL SENT:", { messageId: data.messageId, to, subject });
+    return data;
   } catch (error) {
-    console.error("EMAIL SEND FAILED:", {
-      code: error.code,
-      command: error.command,
-      response: error.response,
-      message: error.message,
-    });
-
+    console.error("EMAIL SEND FAILED:", error.message);
     throw error;
   }
 };
