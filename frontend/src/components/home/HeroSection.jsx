@@ -21,11 +21,12 @@ const HeroSection = () => {
               id="hero-heading"
               className="text-balance text-h1 sm:text-display-2"
             >
-              Buy, sell, and exchange with fellow Rungta students
+              Sell your unused stuff. Buy what you need.
             </h1>
             <p className="mt-4 max-w-md text-pretty text-body-lg leading-relaxed text-text-secondary sm:mt-5">
-              A campus-only marketplace for books, electronics, and everyday
-              essentials — built for students, verified for students.
+              A campus-only marketplace where Rungta students exchange books,
+              electronics, and everyday essentials they no longer use —
+              built for students, verified for students 🤝
             </p>
 
             <div className="mt-7 flex flex-col gap-3 xs:flex-row sm:mt-8">
