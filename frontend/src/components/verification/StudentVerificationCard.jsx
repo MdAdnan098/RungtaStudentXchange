@@ -77,7 +77,7 @@ const StudentVerificationCard = () => {
     try {
       const response = await verifyOtp({ email: sentToEmail, otp: formData.otp });
       setUser(response.data.data.user);
-      toast.success("Verified! Ab tum officially Verified Rungta Student ho.");
+      toast.success("Verified! Now you are officially Verified Rungta Student.");
     } catch (error) {
       setSubmitError(getErrorMessage(error, "OTP match nahi hua. Ek baar dobara check karke try karo."));
     }
@@ -103,7 +103,7 @@ const StudentVerificationCard = () => {
             <ShieldCheck className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>
-            <h2 className="text-h5 leading-snug">😕 Abhi tum guest ke roop mein browse kar rahe ho.</h2>
+            <h2 className="text-h5 leading-snug">😕 Abhi tum as a guest browse kar rahe ho.</h2>
             <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
               🛡️ Verified Student badge se buyers aur sellers ke beech trust banta hai aur marketplace sabke liye
               zyada safe ho jaata hai.
@@ -132,7 +132,7 @@ const StudentVerificationCard = () => {
         </span>
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-h5 leading-snug">✅ Tum ek Verified Student ho.</h2>
+            <h2 className="text-h5 leading-snug">✅  Verified R1 student</h2>
             <span className="badge-success">Verified</span>
           </div>
           <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
@@ -181,7 +181,7 @@ const StudentVerificationCard = () => {
               className="btn-primary mt-4 w-full sm:w-auto"
             >
               {emailForm.formState.isSubmitting && <LoadingSpinner size="sm" />}
-              {emailForm.formState.isSubmitting ? "Bhej rahe hain…" : "OTP Bhejo"}
+              {emailForm.formState.isSubmitting ? "Bhej rahe hain…" : "Send OTP"}
             </button>
           </form>
         )}
@@ -230,7 +230,7 @@ const StudentVerificationCard = () => {
                 }}
                 className="text-body-sm text-text-muted hover:text-text transition-colors duration-base ease-standard"
               >
-                Email badlo
+                Change Email Id
               </button>
             </div>
           </form>
