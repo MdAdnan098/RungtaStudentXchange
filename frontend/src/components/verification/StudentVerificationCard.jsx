@@ -132,7 +132,7 @@ const StudentVerificationCard = () => {
         </span>
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-h5 leading-snug">✅  Verified R1 student</h2>
+            <h2 className="text-h5 leading-snug">Now you are Verified R1 Student</h2>
             <span className="badge-success">Verified</span>
           </div>
           <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
