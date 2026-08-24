@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { X, LogIn, UserPlus, User, LayoutDashboard, PlusCircle, ShieldCheck, LogOut } from "lucide-react";
+import { X, LogIn, UserPlus, User, PlusCircle, ShieldCheck, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import ThemeToggle from "@/components/common/ThemeToggle";
@@ -127,12 +127,7 @@ const MobileNav = ({ isOpen, onClose }) => {
                   </NavLink>
                 </li>
               )}
-              <li>
-                <NavLink to="/dashboard" onClick={onClose} className={itemClasses}>
-                  <LayoutDashboard className="h-5 w-5" aria-hidden="true" />
-                  Dashboard
-                </NavLink>
-              </li>
+              
               <li>
                 <NavLink to="/profile" onClick={onClose} className={itemClasses}>
                   <User className="h-5 w-5" aria-hidden="true" />
