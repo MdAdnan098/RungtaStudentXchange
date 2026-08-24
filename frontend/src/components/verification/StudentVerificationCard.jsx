@@ -79,7 +79,7 @@ const StudentVerificationCard = () => {
       setUser(response.data.data.user);
       toast.success("Verified! Now you are officially Verified Rungta Student.");
     } catch (error) {
-      setSubmitError(getErrorMessage(error, "OTP match nahi hua. Ek baar dobara check karke try karo."));
+      setSubmitError(getErrorMessage(error, "OTP match nahi hua. dobara check karke try karo."));
     }
   };
 
@@ -104,10 +104,6 @@ const StudentVerificationCard = () => {
           </span>
           <div>
             <h2 className="text-h5 leading-snug">😕 Abhi tum as a guest browse kar rahe ho.</h2>
-            <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
-              🛡️ Verified Student badge se buyers aur sellers ke beech trust banta hai aur marketplace sabke liye
-              zyada safe ho jaata hai.
-            </p>
             <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
               Pehle apna account banao, phir apni official Rungta Student Email ID se verify kar lo.
             </p>
