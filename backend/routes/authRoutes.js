@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, registerAdmin, loginAdmin, getMe } from "../controllers/authController.js";
+import { registerUser, loginUser, registerAdmin, loginAdmin, getMe, resetAdminPassword } from "../controllers/authController.js";
 import {
   sendPasswordResetOtp,
   verifyPasswordResetOtp,
@@ -14,6 +14,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/admin/register", registerAdmin);
 router.post("/admin/login", loginAdmin);
+router.post("/admin/forgot-password", resetAdminPassword);
 router.get("/me", protect, getMe);
 
 // Forgot Password — public (the whole point is the user isn't logged in)

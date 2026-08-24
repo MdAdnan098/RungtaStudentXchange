@@ -292,3 +292,66 @@ export const getMe = async (req, res) => {
     });
   }
 };
+
+// @desc    Reset an admin's password using ADMIN_REGISTER_SECRET
+//          instead of email OTP — admin accounts have no email on
+//          file, so the normal forgot-password flow can't apply here.
+// @route   POST /api/auth/admin/forgot-password
+// @access  Public (gated by ADMIN_REGISTER_SECRET, same as registerAdmin)
+export const resetAdminPassword = async (req, res) => {
+  try {
+    const { username, adminSecret, newPassword } = req.body;
+
+    if (!username || !adminSecret || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Username, secret key, and new password are required",
+        data: null,
+      });
+    }
+
+    if (!process.env.ADMIN_REGISTER_SECRET || adminSecret !== process.env.ADMIN_REGISTER_SECRET) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid secret key",
+        data: null,
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+        data: null,
+      });
+    }
+
+    const user = await User.findOne({
+      username: username.toLowerCase().trim(),
+      role: "admin",
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No admin account found with that username",
+        data: null,
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully. You can log in with your new password now.",
+      data: null,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to reset password",
+      data: null,
+    });
+  }
+};

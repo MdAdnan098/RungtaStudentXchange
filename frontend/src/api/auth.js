@@ -19,3 +19,6 @@ export const loginAdmin = ({ username, password }) =>
   axiosInstance.post(ENDPOINTS.AUTH.ADMIN_LOGIN, { username, password });
 
 export const getMe = ({ signal } = {}) => axiosInstance.get(ENDPOINTS.AUTH.ME, { signal });
+
+export const resetAdminPassword = ({ username, adminSecret, newPassword }) =>
+  axiosInstance.post(ENDPOINTS.AUTH.ADMIN_FORGOT_PASSWORD, { username, adminSecret, newPassword });

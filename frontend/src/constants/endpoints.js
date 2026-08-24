@@ -13,6 +13,7 @@ export const ENDPOINTS = {
     FORGOT_PASSWORD_SEND_OTP: "/auth/forgot-password/send-otp",
     FORGOT_PASSWORD_VERIFY_OTP: "/auth/forgot-password/verify-otp",
     FORGOT_PASSWORD_RESET: "/auth/forgot-password/reset",
+    ADMIN_FORGOT_PASSWORD: "/auth/admin/forgot-password",
   },
 
   // otpRoutes.js

@@ -6,7 +6,9 @@ import PasswordField from "@/components/auth/PasswordField";
 import FormError from "@/components/auth/FormError";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import ForgotPasswordFlow from "@/components/auth/ForgotPasswordFlow";
+import AdminForgotPasswordFlow from "@/components/auth/AdminForgotPasswordFlow";
 import { changePassword } from "@/api/users";
+import { useAuthStore } from "@/store/authStore";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { passwordRule, confirmPasswordRule } from "@/utils/validationRules";
 
@@ -19,13 +21,15 @@ import { passwordRule, confirmPasswordRule } from "@/utils/validationRules";
  * rather than being folded into one combined "Save" that would
  * misrepresent two separate requests as one.
  *
- * "Forgot Password?" used to link to the /forgot-password page, but
- * that route sits behind GuestRoute — a logged-in user clicking it
- * was getting bounced straight to "/", which read as broken. It now
- * swaps in the same <ForgotPasswordFlow> used on Login, inline in
- * this card, so the email/OTP form opens right here instead.
+ * "Forgot Password?" branches by role: regular users get
+ * <ForgotPasswordFlow> (mobile + email → OTP), since their account
+ * has an email on file. Admin accounts are created with a username +
+ * ADMIN_REGISTER_SECRET and have no email at all, so they get
+ * <AdminForgotPasswordFlow> instead (username + the same secret key
+ * → new password, no OTP).
  */
 const ChangePasswordSection = () => {
+  const isAdmin = useAuthStore((state) => state.user?.role === "admin");
   const [submitError, setSubmitError] = useState(null);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const {
@@ -51,15 +55,18 @@ const ChangePasswordSection = () => {
   };
 
   if (isForgotPasswordOpen) {
+    const handleDone = () => {
+      toast.success("Password reset ho gaya — ab naya password use kar sakte ho.");
+      setIsForgotPasswordOpen(false);
+    };
+
     return (
       <div className="card-padded mt-6">
-        <ForgotPasswordFlow
-          onCancel={() => setIsForgotPasswordOpen(false)}
-          onDone={() => {
-            toast.success("Password reset ho gaya — ab naya password use kar sakte ho.");
-            setIsForgotPasswordOpen(false);
-          }}
-        />
+        {isAdmin ? (
+          <AdminForgotPasswordFlow onCancel={() => setIsForgotPasswordOpen(false)} onDone={handleDone} />
+        ) : (
+          <ForgotPasswordFlow onCancel={() => setIsForgotPasswordOpen(false)} onDone={handleDone} />
+        )}
       </div>
     );
   }
@@ -107,8 +114,9 @@ const ChangePasswordSection = () => {
 
         <div className="mt-5 rounded-lg border border-border bg-background-subtle px-4 py-3.5">
           <p className="text-body-sm text-text-muted">
-            Purana password yaad nahi? Registration ke time jo email use kiya tha, wahi humare Forgot Password page
-            par fill kar dena — 30 second se bhi kam lagega 🙂
+            {isAdmin
+              ? "Forgot your password? Use your admin secret key (from the server settings) to set a new one below — it takes less than a minute."
+              : "Purana password yaad nahi? Registration ke time jo email use kiya tha, wahi humare Forgot Password page par fill kar dena — 30 second se bhi kam lagega 🙂"}
           </p>
           <button type="button" onClick={() => setIsForgotPasswordOpen(true)} className="btn-secondary btn-sm mt-3">
             <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />

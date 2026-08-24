@@ -14,6 +14,9 @@ import { usePageTitle } from "@/hooks/usePageTitle";
  * authStore) to write the fresh copy back, so every other place that
  * reads the user (Navbar, etc.) benefits too. No new store: this is
  * exactly what authStore already exists for.
+ *
+ * "My Listings" is hidden for admin accounts — admins don't create
+ * marketplace listings, so the link has nothing to show them.
  */
 const Profile = () => {
   usePageTitle("Your Profile");
@@ -37,6 +40,8 @@ const Profile = () => {
 
   if (!user) return null; // ProtectedRoute guarantees this shouldn't happen
 
+  const isAdmin = user.role === "admin";
+
   return (
     <Section spacing="md">
       <PageContainer size="md">
@@ -49,11 +54,13 @@ const Profile = () => {
             <Pencil className="h-4 w-4" aria-hidden="true" />
             Edit Profile Info/Password
           </Link>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <Link to="/profile/listings" className="btn-secondary justify-center py-3">
-              <Package className="h-4 w-4" aria-hidden="true" />
-              My Listings
-            </Link>
+          <div className={isAdmin ? "grid grid-cols-1 gap-3 sm:gap-4" : "grid grid-cols-2 gap-3 sm:gap-4"}>
+            {!isAdmin && (
+              <Link to="/profile/listings" className="btn-secondary justify-center py-3">
+                <Package className="h-4 w-4" aria-hidden="true" />
+                My Listings
+              </Link>
+            )}
             <Link to="/settings" className="btn-secondary justify-center py-3">
               <SettingsIcon className="h-4 w-4" aria-hidden="true" />
               Settings
