@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Eye } from "lucide-react";
 import ProductCard from "@/components/browse/ProductCard";
 import DeleteConfirmDialog from "@/components/product/DeleteConfirmDialog";
 import { updateProductStatus, deleteProduct } from "@/api/products";
@@ -60,7 +60,15 @@ const MyListingCard = ({ product, wishlistedIds, onToggleWishlist, onStatusChang
         onToggleWishlist={onToggleWishlist}
         showStatusBadge
       />
+      
+      <div className="flex items-center gap-1.5 px-0.5 text-body-sm text-text-muted">
+        <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>{product.viewCount || 0} views</span>
+      </div>
 
+      <div className="flex items-center gap-2">
+        <Link to={`/products/${product._id}/edit`} className="btn-secondary btn-sm min-w-0 flex-1 py-2">
+      
       <div className="flex items-center gap-2">
         <Link to={`/products/${product._id}/edit`} className="btn-secondary btn-sm min-w-0 flex-1 py-2">
           <Pencil className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
