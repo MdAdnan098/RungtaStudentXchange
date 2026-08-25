@@ -19,10 +19,12 @@
        positioned fixed + translated fully off-screen when closed.
        Some mobile browsers still count that off-screen box toward the
        document's scrollable width, letting users swipe/scroll
-       sideways into empty space. Clipping horizontal overflow at the
-       root is the standard fix — it never affects intended vertical
-       scrolling or any in-flow layout. */
-    overflow-x: hidden;
+       sideways into empty space. `clip` (not `hidden`) blocks that
+       horizontal overflow without turning body into its own scroll
+       container — `hidden` here would make the browser auto-promote
+       overflow-y to `auto` too (a CSS spec quirk), which breaks the
+       Navbar's `position: sticky` on some mobile browsers. */
+    overflow-x: clip;
   }
 
   body {
