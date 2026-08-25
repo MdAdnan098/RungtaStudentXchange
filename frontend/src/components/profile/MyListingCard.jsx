@@ -68,9 +68,7 @@ const MyListingCard = ({ product, wishlistedIds, onToggleWishlist, onStatusChang
 
       <div className="flex items-center gap-2">
         <Link to={`/products/${product._id}/edit`} className="btn-secondary btn-sm min-w-0 flex-1 py-2">
-      
-      <div className="flex items-center gap-2">
-        <Link to={`/products/${product._id}/edit`} className="btn-secondary btn-sm min-w-0 flex-1 py-2">
+          
           <Pencil className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">Edit</span>
         </Link>
