@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Menu, X, Bell, User, ShieldCheck, ChevronDown, LogOut, Settings } from "lucide-react";
+import { Menu, X, User, ShieldCheck, ChevronDown, LogOut, Settings } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import Logo from "@/components/common/Logo";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import MobileNav from "@/components/layout/MobileNav";
+import NotificationBell from "@/components/layout/NotificationBell";
 import PageContainer from "@/components/layout/PageContainer";
 import { MAIN_NAV_LINKS } from "@/constants/navigation";
 import { cn } from "@/utils/cn";
@@ -152,14 +153,7 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <>
-                <button
-                  type="button"
-                  className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary hover:bg-surface-hover hover:text-text transition-colors duration-base ease-standard"
-                  aria-label="Notifications"
-                  title="Notifications"
-                >
-                  <Bell className="h-[1.1rem] w-[1.1rem]" aria-hidden="true" />
-                </button>
+                <NotificationBell />
                 <AvatarMenu user={user} />
               </>
             ) : (
@@ -174,8 +168,9 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile: trigger only (theme toggle lives inside the drawer) */}
+          {/* Mobile: bell (if logged in) + hamburger trigger */}
           <div className="flex items-center gap-1 md:hidden">
+            {isAuthenticated && <NotificationBell />}
             <button
               ref={mobileTriggerRef}
               type="button"

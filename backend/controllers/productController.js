@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 import Report from "../models/Report.js";
+import Notification from "../models/Notification.js";
 import { uploadToCloudinary, deleteFromCloudinary } from "../config/cloudinary.js";
 import {
   applySearch,
@@ -393,6 +394,18 @@ export const incrementViewCount = async (req, res) => {
         success: false,
         message: "Product not found",
         data: null,
+      });
+    }
+
+    // Notify the seller — but never when they're viewing their own
+    // listing (req.user is only set if the viewer is logged in,
+    // thanks to optionalAuth; guests always pass this check).
+    if (!req.user || String(req.user._id) !== String(product.seller)) {
+      await Notification.create({
+        recipient: product.seller,
+        type: "product_view",
+        product: product._id,
+        message: `Someone viewed your listing "${product.title}"`,
       });
     }
 

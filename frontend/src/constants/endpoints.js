@@ -76,7 +76,15 @@ export const ENDPOINTS = {
   },
 
   // visitorRoutes.js
+  // visitorRoutes.js
   VISITORS: {
     TRACK: "/visitors/track",
+  },
+
+  // notificationRoutes.js
+  NOTIFICATIONS: {
+    BASE: "/notifications",
+    MARK_READ: (id) => `/notifications/${id}/read`,
+    MARK_ALL_READ: "/notifications/read-all",
   },
 };

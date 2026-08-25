@@ -14,6 +14,8 @@ import reportRoutes from "./routes/reportRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import visitorRoutes from "./routes/visitorRoutes.js";
 
+import notificationRoutes from "./routes/notificationRoutes.js";
+
 import { notFound, globalErrorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -47,6 +49,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/visitors", visitorRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(notFound);
 app.use(globalErrorHandler);
