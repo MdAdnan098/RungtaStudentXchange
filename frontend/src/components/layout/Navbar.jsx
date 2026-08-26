@@ -125,6 +125,7 @@ const Navbar = () => {
   };
 
   return (
+    <>
     <header className="sticky top-0 z-sticky border-b border-border bg-background-subtle/90 backdrop-blur-sm dark:shadow-nav-dark">
       <PageContainer>
         <div className="flex h-16 items-center justify-between gap-4">
@@ -189,9 +190,10 @@ const Navbar = () => {
           </div>
         </div>
       </PageContainer>
-
-      <MobileNav isOpen={isMobileNavOpen} onClose={closeMobileNav} />
     </header>
+
+    <MobileNav isOpen={isMobileNavOpen} onClose={closeMobileNav} />
+    </>
   );
 };
 
