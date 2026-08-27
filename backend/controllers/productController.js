@@ -310,6 +310,7 @@ export const deleteProduct = async (req, res) => {
 
     await Product.findByIdAndDelete(req.params.id);
     await Report.deleteMany({ product: req.params.id });
+    await Notification.deleteMany({ product: req.params.id });
 
     return res.status(200).json({
       success: true,

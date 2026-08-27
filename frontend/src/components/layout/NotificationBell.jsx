@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell } from "lucide-react";
 import toast from "react-hot-toast";
-import { getMyNotifications, markNotificationRead, markAllNotificationsRead } from "@/api/notifications";
+import {
+  getMyNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  deleteAllNotifications,
+} from "@/api/notifications";
 import { cn } from "@/utils/cn";
 
 /**
@@ -87,6 +92,17 @@ const NotificationBell = () => {
     }
   };
 
+  const handleClearAll = async (event) => {
+    event.stopPropagation();
+    try {
+      await deleteAllNotifications();
+      setNotifications([]);
+      setUnreadCount(0);
+    } catch {
+      toast.error("Couldn't clear notifications");
+    }
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button
@@ -114,15 +130,26 @@ const NotificationBell = () => {
         >
           <div className="flex items-center justify-between px-3 py-2">
             <p className="text-body-sm font-medium text-text">Notifications</p>
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={handleMarkAllRead}
-                className="text-caption font-medium text-primary hover:text-primary-hover"
-              >
-                Mark all read
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleMarkAllRead}
+                  className="text-caption font-medium text-primary hover:text-primary-hover"
+                >
+                  Mark all read
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="text-caption font-medium text-text-muted hover:text-danger-text"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
           </div>
           <div className="divider" />
 

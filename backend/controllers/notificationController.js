@@ -82,3 +82,24 @@ export const markAllNotificationsRead = async (req, res) => {
     });
   }
 };
+
+// @desc    Delete all of the logged-in user's notifications
+// @route   DELETE /api/notifications
+// @access  Private
+export const deleteAllNotifications = async (req, res) => {
+  try {
+    await Notification.deleteMany({ recipient: req.user._id });
+
+    return res.status(200).json({
+      success: true,
+      message: "All notifications cleared",
+      data: null,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to clear notifications",
+      data: null,
+    });
+  }
+};

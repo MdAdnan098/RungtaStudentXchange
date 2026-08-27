@@ -9,3 +9,6 @@ export const markNotificationRead = (id) =>
 
 export const markAllNotificationsRead = () =>
   axiosInstance.patch(ENDPOINTS.NOTIFICATIONS.MARK_ALL_READ);
+
+export const deleteAllNotifications = () =>
+  axiosInstance.delete(ENDPOINTS.NOTIFICATIONS.BASE);
