@@ -1,7 +1,10 @@
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import EmptyState from "@/components/common/EmptyState";
+import Modal, { ModalHeader } from "@/components/common/Modal";
 import { cn } from "@/utils/cn";
+
+const LIGHTBOX_TITLE_ID = "image-gallery-lightbox-title";
 
 const SWIPE_THRESHOLD_PX = 40;
 
@@ -20,6 +23,7 @@ const SWIPE_THRESHOLD_PX = 40;
 const ImageGallery = ({ images, title }) => {
   const [index, setIndex] = useState(0);
   const [failedIds, setFailedIds] = useState(() => new Set());
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const touchStartXRef = useRef(null);
 
   if (!images || images.length === 0) {
@@ -80,13 +84,20 @@ const ImageGallery = ({ images, title }) => {
           // Main image is eager, not lazy — it's the primary
           // above-the-fold content of this page. Only the smaller
           // thumbnails below are lazy-loaded.
-          <img
-            src={images[index].url}
-            alt={`${title} — photo ${index + 1} of ${images.length}`}
-            loading="eager"
-            onError={() => markFailed(activeKey)}
-            className="h-full w-full object-contain transition-transform duration-slow ease-standard hover:scale-110"
-          />
+          <button
+            type="button"
+            onClick={() => setIsLightboxOpen(true)}
+            className="h-full w-full cursor-zoom-in"
+            aria-label="View full-size image"
+          >
+            <img
+              src={images[index].url}
+              alt={`${title} — photo ${index + 1} of ${images.length}`}
+              loading="eager"
+              onError={() => markFailed(activeKey)}
+              className="h-full w-full object-contain transition-transform duration-slow ease-standard hover:scale-110"
+            />
+          </button>
         )}
 
         {images.length > 1 && (
@@ -150,6 +161,22 @@ const ImageGallery = ({ images, title }) => {
           })}
         </div>
       )}
+
+      <Modal
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        titleId={LIGHTBOX_TITLE_ID}
+        maxWidthClass="max-w-3xl"
+      >
+        <ModalHeader titleId={LIGHTBOX_TITLE_ID} title={title} onClose={() => setIsLightboxOpen(false)} />
+        {!activeFailed && (
+          <img
+            src={images[index].url}
+            alt={`${title} — photo ${index + 1} of ${images.length}`}
+            className="mx-auto max-h-[75vh] w-full rounded-xl bg-background-subtle object-contain"
+          />
+        )}
+      </Modal>
     </div>
   );
 };
