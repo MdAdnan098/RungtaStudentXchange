@@ -18,19 +18,10 @@ export const deleteMyAccount = () => axiosInstance.delete(ENDPOINTS.USERS.PROFIL
 
 export const getMyListings = ({ signal } = {}) => axiosInstance.get(ENDPOINTS.USERS.MY_LISTINGS, { signal });
 
-// PUT /users/me/avatar is multipart, single field named "image" (see
-// backend/middleware/uploadMiddleware.js uploadSingleImage) — same
-// `Content-Type: undefined` override as createProduct/updateProduct
-// (api/products.js) for the same reason: let the browser set the
-// multipart boundary itself.
-export const updateAvatar = (file, { onUploadProgress } = {}) => {
-  const formData = new FormData();
-  formData.append("image", file);
-  return axiosInstance.put(ENDPOINTS.USERS.AVATAR, formData, {
-    headers: { "Content-Type": undefined },
-    onUploadProgress,
-  });
-};
+/// Image is already uploaded straight to ImageKit by the time this is
+// called (see uploadToImageKit.js) — plain JSON now, not multipart.
+export const updateAvatar = ({ url, fileId }) =>
+  axiosInstance.put(ENDPOINTS.USERS.AVATAR, { url, fileId });
 
 export const deleteAvatar = () => axiosInstance.delete(ENDPOINTS.USERS.AVATAR);
 

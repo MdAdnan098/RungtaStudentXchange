@@ -30,21 +30,13 @@ export const incrementViewCount = (id) => axiosInstance.patch(ENDPOINTS.PRODUCTS
 export const getProductsBySeller = (sellerId, { signal } = {}) =>
   axiosInstance.get(ENDPOINTS.PRODUCTS.BY_SELLER(sellerId), { signal });
 
-// createProduct/updateProduct are multipart (uploadMultipleImages
-// expects the "images" field, up to 6 files — see
-// backend/middleware/uploadMiddleware.js). `Content-Type: undefined`
-// overrides axiosInstance's default `application/json` header for
-// just this request, letting the browser set the correct
-// `multipart/form-data; boundary=...` header itself — a FormData body
-// with an explicitly-forced Content-Type (even "multipart/form-data"
-// without a boundary) would be unparseable by multer.
-const multipartConfig = { headers: { "Content-Type": undefined } };
+// Images are already uploaded straight to ImageKit by the time these
+// are called (see uploadToImageKit.js) — this is now a plain JSON
+// request with the resulting { url, fileId } pairs in `payload.images`,
+// not multipart/form-data.
+export const createProduct = (payload) => axiosInstance.post(ENDPOINTS.PRODUCTS.BASE, payload);
 
-export const createProduct = (formData, { onUploadProgress } = {}) =>
-  axiosInstance.post(ENDPOINTS.PRODUCTS.BASE, formData, { ...multipartConfig, onUploadProgress });
-
-export const updateProduct = (id, formData, { onUploadProgress } = {}) =>
-  axiosInstance.put(ENDPOINTS.PRODUCTS.BY_ID(id), formData, { ...multipartConfig, onUploadProgress });
+export const updateProduct = (id, payload) => axiosInstance.put(ENDPOINTS.PRODUCTS.BY_ID(id), payload);
 
 // JSON, not multipart — separate from the main form save (see
 // AvailabilityField.jsx). Only "active"/"sold"/"removed" are valid

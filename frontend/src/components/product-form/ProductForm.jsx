@@ -14,8 +14,8 @@ import {
   alternateNumberRule,
   MIN_IMAGES,
 } from "@/utils/productValidationRules";
-import { buildProductFormData } from "@/utils/buildProductFormData";
-import { urlToFile } from "@/utils/urlToFile";
+import { buildProductPayload } from "@/utils/buildProductPayload";
+import { uploadToImageKit } from "@/utils/uploadToImageKit";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { createProduct, updateProduct } from "@/api/products";
 import { useUnsavedChangesWarning } from "@/hooks/useUnsavedChangesWarning";
@@ -30,8 +30,11 @@ const makeId = () => `img-${Date.now()}-${nextId++}`;
 
 // Existing product images arrive as { url, publicId } — normalize to
 // the same { id, url, file } shape ImageUploadField works with,
-// `file: null` marking them as "existing, not yet changed."
-const toImageState = (images = []) => images.map((image) => ({ id: makeId(), url: image.url, file: null }));
+// `file: null` marking them as "existing, not yet changed." `fileId`
+// is carried through unchanged so an untouched image can be sent back
+// to the backend as-is (see onSubmit) without re-uploading it.
+const toImageState = (images = []) =>
+  images.map((image) => ({ id: makeId(), url: image.url, file: null, fileId: image.publicId }));
 
 /**
  * A titled card wrapper used to group related fields — icon badge +
@@ -143,24 +146,28 @@ const ProductForm = ({ mode, product, onSuccess }) => {
       let response;
 
       if (mode === "create") {
-        const formData = buildProductFormData(values, images.map((image) => image.file), "create");
-        response = await createProduct(formData, {
-          onUploadProgress: (event) => setUploadProgress(Math.round((event.loaded / event.total) * 100)),
-        });
+        setUploadProgress(0);
+        const uploadedImages = await Promise.all(images.map((image) => uploadToImageKit(image.file, "products")));
+        const payload = buildProductPayload(values, uploadedImages, "create");
+        response = await createProduct(payload);
+      } else if (imagesChanged) {
+        // Only upload images that are actually new (`image.file` set)
+        // — kept-as-is images already have their real ImageKit
+        // { url, fileId } from when they were first uploaded, so
+        // there's no re-upload cost for images the user didn't touch.
+        setUploadProgress(0);
+        const finalImages = await Promise.all(
+          images.map((image) =>
+            image.file ? uploadToImageKit(image.file, "products") : { url: image.url, fileId: image.fileId }
+          )
+        );
+        const payload = buildProductPayload(values, finalImages, "update");
+        response = await updateProduct(product._id, payload);
       } else {
-        // Only rebuild the full image set (and pay the re-upload cost
-        // for kept images) if the set actually changed — see
-        // urlToFile.js for why this is necessary at all.
-        const finalFiles = imagesChanged
-          ? await Promise.all(
-              images.map((image, index) => (image.file ? image.file : urlToFile(image.url, `image-${index}.jpg`)))
-            )
-          : [];
-
-        const formData = buildProductFormData(values, finalFiles, "update");
-        response = await updateProduct(product._id, formData, {
-          onUploadProgress: (event) => setUploadProgress(Math.round((event.loaded / event.total) * 100)),
-        });
+        // Nothing about the images changed at all — send the update
+        // with no `images` key so the backend leaves them untouched.
+        const payload = buildProductPayload(values, null, "update");
+        response = await updateProduct(product._id, payload);
       }
 
       toast.success(response.data.message || (mode === "create" ? "Listing created" : "Listing updated"));

@@ -82,9 +82,15 @@ export const ENDPOINTS = {
   },
 
   // notificationRoutes.js
+  // notificationRoutes.js
   NOTIFICATIONS: {
     BASE: "/notifications",
     MARK_READ: (id) => `/notifications/${id}/read`,
     MARK_ALL_READ: "/notifications/read-all",
+  },
+
+  // uploadRoutes.js
+  UPLOADS: {
+    AUTH: "/uploads/auth",
   },
 };

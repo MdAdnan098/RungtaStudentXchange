@@ -14,7 +14,8 @@ import {
   alternateNumberRule,
   MIN_IMAGES,
 } from "@/utils/productValidationRules";
-import { buildProductFormData } from "@/utils/buildProductFormData";
+import { buildProductPayload } from "@/utils/buildProductPayload";
+import { uploadToImageKit } from "@/utils/uploadToImageKit";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { createProduct } from "@/api/products";
 import { useUnsavedChangesWarning } from "@/hooks/useUnsavedChangesWarning";
@@ -126,13 +127,15 @@ const CreateListingForm = ({ onSuccess }) => {
     setImagesError(null);
     setSubmitError(null);
 
-    // Rebuilds a fresh FormData per attempt — used for both the
-    // initial try and the silent retry below.
-    const attemptUpload = () => {
-      const formData = buildProductFormData(values, images.map((image) => image.file), "create");
-      return createProduct(formData, {
-        onUploadProgress: (event) => setUploadProgress(Math.round((event.loaded / event.total) * 100)),
-      });
+    // Uploads every image straight to ImageKit (in parallel) first,
+    // then creates the listing with the resulting URLs — repeated for
+    // both the initial try and the silent retry below, same as the
+    // old FormData rebuild used to be.
+    const attemptUpload = async () => {
+      setUploadProgress(0);
+      const uploadedImages = await Promise.all(images.map((image) => uploadToImageKit(image.file, "products")));
+      const payload = buildProductPayload(values, uploadedImages, "create");
+      return createProduct(payload);
     };
 
     try {

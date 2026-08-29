@@ -254,7 +254,15 @@ export const updateProduct = async (req, res) => {
       // already confirmed uploaded (the browser did that before
       // calling this endpoint) — so a failed upload never leaves a
       // listing with no images at all.
-      await Promise.all(product.images.map((image) => deleteFromImageKit(image.publicId)));
+      // Only delete images that are actually being removed — an
+      // image the user kept unchanged (same fileId still present in
+      // the incoming array) must survive on ImageKit, not get wiped
+      // just because the listing was re-saved.
+      const incomingFileIds = new Set(images.map((image) => image.fileId).filter(Boolean));
+      const imagesToDelete = product.images.filter((image) => !incomingFileIds.has(image.publicId));
+      await Promise.all(imagesToDelete.map((image) => deleteFromImageKit(image.publicId)));
+
+      product.images = images.map((image) => ({ url: image.url, publicId: image.fileId }));
 
       product.images = images.map((image) => ({ url: image.url, publicId: image.fileId }));
     }

@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Camera, Trash2, User as UserIcon } from "lucide-react";
 import { updateAvatar, deleteAvatar } from "@/api/users";
+import { uploadToImageKit } from "@/utils/uploadToImageKit";
 import { useAuthStore } from "@/store/authStore";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { validateImageFile } from "@/utils/productValidationRules";
@@ -37,7 +38,8 @@ const AvatarUploadField = () => {
 
     setIsUploading(true);
     try {
-      const response = await updateAvatar(file);
+      const uploaded = await uploadToImageKit(file, "avatars");
+      const response = await updateAvatar(uploaded);
       setUser(response.data.data.user);
       toast.success(response.data.message || "Avatar updated");
     } catch (error) {
@@ -45,7 +47,6 @@ const AvatarUploadField = () => {
     } finally {
       setIsUploading(false);
     }
-  };
 
   const handleRemove = async () => {
     setIsUploading(true);
