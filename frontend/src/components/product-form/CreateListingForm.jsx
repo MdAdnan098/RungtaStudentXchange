@@ -160,8 +160,9 @@ const CreateListingForm = ({ onSuccess }) => {
           return;
         } catch (retryError) {
           if (!retryError.response) {
+            console.log("DEBUG real error:", retryError);
             setSubmitError(
-              "Sorry! Image upload complete nahi ho paya. Bas image ko remove karke wahi image dobara select kare. Form dobara bharne ki zarurat nahi hai."
+              "DEBUG: " + (retryError.message || "unknown error") + " | Sorry! Image upload complete nahi ho paya."
             );
           } else {
             setSubmitError(getErrorMessage(retryError, "Failed to create listing"));
