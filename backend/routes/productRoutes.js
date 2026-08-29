@@ -11,7 +11,7 @@ import {
   getProductsBySeller,
 } from "../controllers/productController.js";
 import { protect, checkBanned, optionalAuth } from "../middleware/authMiddleware.js";
-import { uploadMultipleImages } from "../middleware/uploadMiddleware.js";
+
 
 const router = express.Router();
 
@@ -24,8 +24,8 @@ router.patch("/:id/view", optionalAuth, incrementViewCount);
 router.get("/", getAllProducts);
 router.get("/:id", getProductById);
 
-router.post("/", protect, checkBanned, uploadMultipleImages, createProduct);
-router.put("/:id", protect, checkBanned, uploadMultipleImages, updateProduct);
+router.post("/", protect, checkBanned, createProduct);
+router.put("/:id", protect, checkBanned, updateProduct);
 router.delete("/:id", protect, deleteProduct);
 
 export default router;

@@ -1,7 +1,7 @@
 import Product from "../models/Product.js";
 import Report from "../models/Report.js";
 import Notification from "../models/Notification.js";
-import { uploadToCloudinary, deleteFromCloudinary } from "../config/cloudinary.js";
+import { deleteFromImageKit } from "../config/imagekit.js";
 import {
   applySearch,
   applyFilters,
@@ -119,7 +119,12 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    if (!req.files || req.files.length === 0) {
+    // Images are no longer uploaded here — the browser already
+    // uploaded them straight to ImageKit and sends back the
+    // resulting {url, fileId} pairs in the JSON body.
+    const { images } = req.body;
+
+    if (!images || !Array.isArray(images) || images.length === 0) {
       return res.status(400).json({
         success: false,
         message: "At least one product image is required",
@@ -127,7 +132,7 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    if (req.files.length > 6) {
+    if (images.length > 6) {
       return res.status(400).json({
         success: false,
         message: "A maximum of 6 images is allowed",
@@ -135,17 +140,8 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    // Uploaded in parallel (was a sequential for-loop) — with several
-    // images this used to add each image's upload time on top of the
-    // last, which compounded with a cold Render instance was long
-    // enough to trip the client/network timeout. Promise.all fires
-    // every upload at once, so total time is roughly the slowest
-    // single image instead of the sum of all of them.
-    const uploadResults = await Promise.all(
-      req.files.map((file) => uploadToCloudinary(file.buffer, "products"))
-    );
-    const uploadedImages = uploadResults.map((result) => ({ url: result.url, publicId: result.publicId }));
-
+    const uploadedImages = images.map((image) => ({ url: image.url, publicId: image.fileId }));
+    
     const product = await Product.create({
       title,
       description,
@@ -243,8 +239,10 @@ export const updateProduct = async (req, res) => {
     if (whatsappNumber !== undefined) product.whatsappNumber = whatsappNumber;
     if (alternateNumber !== undefined) product.alternateNumber = alternateNumber || null;
 
-    if (req.files && req.files.length > 0) {
-      if (req.files.length > 6) {
+    const { images } = req.body;
+
+    if (images && Array.isArray(images) && images.length > 0) {
+      if (images.length > 6) {
         return res.status(400).json({
           success: false,
           message: "A maximum of 6 images is allowed",
@@ -252,17 +250,13 @@ export const updateProduct = async (req, res) => {
         });
       }
 
-      // Same fix as createProduct: delete + upload each run in
-      // parallel instead of one-file-at-a-time, so total request time
-      // doesn't scale with image count.
-      await Promise.all(product.images.map((image) => deleteFromCloudinary(image.publicId)));
+      // Old ImageKit files are deleted only after the new ones are
+      // already confirmed uploaded (the browser did that before
+      // calling this endpoint) — so a failed upload never leaves a
+      // listing with no images at all.
+      await Promise.all(product.images.map((image) => deleteFromImageKit(image.publicId)));
 
-      const uploadResults = await Promise.all(
-        req.files.map((file) => uploadToCloudinary(file.buffer, "products"))
-      );
-      const uploadedImages = uploadResults.map((result) => ({ url: result.url, publicId: result.publicId }));
-
-      product.images = uploadedImages;
+      product.images = images.map((image) => ({ url: image.url, publicId: image.fileId }));
     }
 
     await product.save();
@@ -304,9 +298,7 @@ export const deleteProduct = async (req, res) => {
       });
     }
 
-    for (const image of product.images) {
-      await deleteFromCloudinary(image.publicId);
-    }
+    await Promise.all(product.images.map((image) => deleteFromImageKit(image.publicId)));
 
     await Product.findByIdAndDelete(req.params.id);
     await Report.deleteMany({ product: req.params.id });

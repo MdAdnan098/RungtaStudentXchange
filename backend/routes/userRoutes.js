@@ -12,7 +12,6 @@ import {
   deleteMyAccount,
 } from "../controllers/userController.js";
 import { protect, checkBanned } from "../middleware/authMiddleware.js";
-import { uploadSingleImage } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router.delete("/me/wishlist/:productId", protect, removeFromWishlist);
 
 router.get("/me/listings", protect, getMyListings);
 
-router.put("/me/avatar", protect, checkBanned, uploadSingleImage, updateAvatar);
+router.put("/me/avatar", protect, checkBanned, updateAvatar);
 router.delete("/me/avatar", protect, deleteAvatar);
 
 router.put("/me/password", protect, checkBanned, changePassword);

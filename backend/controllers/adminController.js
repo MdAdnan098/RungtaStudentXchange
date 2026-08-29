@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import Product from "../models/Product.js";
 import Report from "../models/Report.js";
-import { deleteFromCloudinary } from "../config/cloudinary.js";
+import { deleteFromImageKit } from "../config/imagekit.js";
 
 // @desc    Get live dashboard statistics
 // @route   GET /api/admin/stats
@@ -275,7 +275,7 @@ export const deleteUserPermanently = async (req, res) => {
     }
 
     if (user.avatarPublicId) {
-      await deleteFromCloudinary(user.avatarPublicId);
+      await deleteFromImageKit(user.avatarPublicId);
     }
 
     await User.findByIdAndDelete(req.params.id);
@@ -307,7 +307,7 @@ export const deleteAllUsers = async (req, res) => {
 
     for (const user of usersToDelete) {
       if (user.avatarPublicId) {
-        await deleteFromCloudinary(user.avatarPublicId);
+        await deleteFromImageKit(user.avatarPublicId);
       }
     }
 
@@ -449,7 +449,7 @@ export const deleteProductPermanently = async (req, res) => {
     }
 
     for (const image of product.images) {
-      await deleteFromCloudinary(image.publicId);
+      await deleteFromImageKit(image.publicId);
     }
 
     await Product.findByIdAndDelete(req.params.id);
@@ -480,7 +480,7 @@ export const deleteAllProducts = async (req, res) => {
 
     for (const product of productsToDelete) {
       for (const image of product.images) {
-        await deleteFromCloudinary(image.publicId);
+        await deleteFromImageKit(image.publicId);
       }
     }
 

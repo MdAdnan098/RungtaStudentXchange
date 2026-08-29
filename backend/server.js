@@ -16,6 +16,8 @@ import visitorRoutes from "./routes/visitorRoutes.js";
 
 import notificationRoutes from "./routes/notificationRoutes.js";
 
+import uploadRoutes from "./routes/uploadRoutes.js";
+
 import { notFound, globalErrorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -50,6 +52,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/visitors", visitorRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/uploads", uploadRoutes);
 
 app.use(notFound);
 app.use(globalErrorHandler);

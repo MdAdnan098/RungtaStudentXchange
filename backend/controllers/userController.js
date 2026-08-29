@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import Product from "../models/Product.js";
-import { uploadToCloudinary, deleteFromCloudinary } from "../config/cloudinary.js";
+import { deleteFromImageKit } from "../config/imagekit.js";
 
 // @desc    Get public profile by user ID
 // @route   GET /api/users/:id
@@ -134,7 +134,9 @@ export const changePassword = async (req, res) => {
 // @access  Private
 export const updateAvatar = async (req, res) => {
   try {
-    if (!req.file) {
+    const { url, fileId } = req.body;
+
+    if (!url || !fileId) {
       return res.status(400).json({
         success: false,
         message: "No image file provided",
@@ -153,13 +155,11 @@ export const updateAvatar = async (req, res) => {
     }
 
     if (user.avatarPublicId) {
-      await deleteFromCloudinary(user.avatarPublicId);
+      await deleteFromImageKit(user.avatarPublicId);
     }
 
-    const result = await uploadToCloudinary(req.file.buffer, "avatars");
-
-    user.avatar = result.url;
-    user.avatarPublicId = result.publicId;
+    user.avatar = url;
+    user.avatarPublicId = fileId;
 
     await user.save();
 
@@ -200,7 +200,7 @@ export const deleteAvatar = async (req, res) => {
       });
     }
 
-    await deleteFromCloudinary(user.avatarPublicId);
+    await deleteFromImageKit(user.avatarPublicId);
 
     user.avatar = null;
     user.avatarPublicId = null;
@@ -373,7 +373,7 @@ export const deleteMyAccount = async (req, res) => {
     }
 
     if (user.avatarPublicId) {
-      await deleteFromCloudinary(user.avatarPublicId);
+      await deleteFromImageKit(user.avatarPublicId);
     }
 
     await User.findByIdAndDelete(req.user._id);
