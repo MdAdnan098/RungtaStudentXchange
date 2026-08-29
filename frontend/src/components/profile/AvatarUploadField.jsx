@@ -47,6 +47,7 @@ const AvatarUploadField = () => {
     } finally {
       setIsUploading(false);
     }
+  };
 
   const handleRemove = async () => {
     setIsUploading(true);
