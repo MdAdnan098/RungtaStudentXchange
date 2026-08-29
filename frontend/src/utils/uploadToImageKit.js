@@ -50,7 +50,12 @@ const compressImage = (file) =>
  * upload itself, so callers don't need to change.
  */
 export const uploadToImageKit = async (file, folder = "rungtastudentxchange") => {
-  const authResponse = await getUploadAuth();
+  let authResponse;
+  try {
+    authResponse = await getUploadAuth();
+  } catch (err) {
+    throw new Error("AUTH_STEP_FAILED: " + err.message);
+  }
   const { signature, token, expire, publicKey, urlEndpoint } = authResponse.data.data;
 
   const compressed = await compressImage(file);
@@ -65,15 +70,20 @@ export const uploadToImageKit = async (file, folder = "rungtastudentxchange") =>
   formData.append("token", token);
   formData.append("expire", expire);
 
-  const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
-    method: "POST",
-    body: formData,
-  });
+  let response;
+  try {
+    response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+      method: "POST",
+      body: formData,
+    });
+  } catch (err) {
+    throw new Error("IMAGEKIT_FETCH_FAILED: " + err.message);
+  }
 
   const result = await response.json();
 
   if (!response.ok) {
-    throw new Error(result.message || "Image upload failed");
+    throw new Error("IMAGEKIT_REJECTED: " + (result.message || "Image upload failed"));
   }
 
   return { url: result.url, fileId: result.fileId, urlEndpoint };
