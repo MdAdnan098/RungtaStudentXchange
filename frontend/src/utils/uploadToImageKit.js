@@ -2,6 +2,10 @@ import { getUploadAuth } from "@/api/uploads";
 
 const MAX_DIMENSION = 1600; // px — plenty for full-screen product photos, well beyond any card/thumbnail
 const JPEG_QUALITY = 0.8;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000; // doubles each retry: 1s, 2s
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Best-effort browser-side compression via <canvas>. Formats canvas
 // can't decode (notably HEIC on most non-Apple browsers) simply fail
@@ -42,6 +46,39 @@ const compressImage = (file) =>
     img.src = objectUrl;
   });
 
+// College wifi/mobile data can be flaky enough that a single fetch to
+// ImageKit occasionally fails with a plain network error (not a real
+// rejection from ImageKit — those come back as a normal, non-ok
+// response and aren't retried here). A couple of quick, silent
+// retries clears this up without the user ever having to manually
+// remove/re-select the image themselves.
+const uploadWithRetry = async (formData) => {
+  let lastError;
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Image upload failed");
+      }
+
+      return result;
+    } catch (err) {
+      lastError = err;
+      if (attempt < MAX_RETRIES - 1) {
+        await sleep(RETRY_DELAY_MS * (attempt + 1));
+      }
+    }
+  }
+
+  throw lastError;
+};
+
 /**
  * Compresses (best-effort) then uploads a single file straight to
  * ImageKit from the browser — our backend only ever issues the
@@ -50,12 +87,7 @@ const compressImage = (file) =>
  * upload itself, so callers don't need to change.
  */
 export const uploadToImageKit = async (file, folder = "rungtastudentxchange") => {
-  let authResponse;
-  try {
-    authResponse = await getUploadAuth();
-  } catch (err) {
-    throw new Error("AUTH_STEP_FAILED: " + err.message);
-  }
+  const authResponse = await getUploadAuth();
   const { signature, token, expire, publicKey, urlEndpoint } = authResponse.data.data;
 
   const compressed = await compressImage(file);
@@ -70,21 +102,7 @@ export const uploadToImageKit = async (file, folder = "rungtastudentxchange") =>
   formData.append("token", token);
   formData.append("expire", expire);
 
-  let response;
-  try {
-    response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
-      method: "POST",
-      body: formData,
-    });
-  } catch (err) {
-    throw new Error("IMAGEKIT_FETCH_FAILED: " + err.message);
-  }
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error("IMAGEKIT_REJECTED: " + (result.message || "Image upload failed"));
-  }
+  const result = await uploadWithRetry(formData);
 
   return { url: result.url, fileId: result.fileId, urlEndpoint };
 };
