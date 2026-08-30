@@ -4,6 +4,8 @@ const MAX_DIMENSION = 1600; // px — plenty for full-screen product photos, wel
 const JPEG_QUALITY = 0.8;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000; // doubles each retry: 1s, 2s
+const AUTH_MAX_RETRIES = 4;
+const AUTH_RETRY_DELAY_MS = 3000;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -86,8 +88,22 @@ const uploadWithRetry = async (formData) => {
  * `{ url, fileId }` shape the backend used to return when it did the
  * upload itself, so callers don't need to change.
  */
+const getUploadAuthWithRetry = async () => {
+  let lastError;
+  for (let attempt = 0; attempt < AUTH_MAX_RETRIES; attempt++) {
+    try {
+      return await getUploadAuth();
+    } catch (err) {
+      lastError = err;
+      if (attempt < AUTH_MAX_RETRIES - 1) {
+        await sleep(AUTH_RETRY_DELAY_MS * (attempt + 1));
+      }
+    }
+  }
+  throw lastError;
+};
 export const uploadToImageKit = async (file, folder = "rungtastudentxchange") => {
-  const authResponse = await getUploadAuth();
+  const authResponse = await getUploadAuthWithRetry();
   const { signature, token, expire, publicKey, urlEndpoint } = authResponse.data.data;
 
   const compressed = await compressImage(file);
