@@ -5,6 +5,7 @@ import calculator from "@/assets/student-items/calculator.png";
 import cooler from "@/assets/student-items/cooler.png";
 import earbud from "@/assets/student-items/earbud.png";
 import earphone from "@/assets/student-items/earphone.png";
+import gym from "@/assets/student-items/gym.png";
 import fan from "@/assets/student-items/fan.png";
 import headphone from "@/assets/student-items/headphone.png";
 import induction from "@/assets/student-items/induction.png";
@@ -13,11 +14,13 @@ import kettle from "@/assets/student-items/kettle.png";
 import keyboard from "@/assets/student-items/keyboard.png";
 import lamp from "@/assets/student-items/lamp.png";
 import laptop from "@/assets/student-items/laptop.png";
+
 import minidrafter from "@/assets/student-items/minidrafter.png";
 import mobile from "@/assets/student-items/mobile.png";
 import mouse from "@/assets/student-items/mouse.png";
 import powerbank from "@/assets/student-items/powerbank.png";
 import stove from "@/assets/student-items/stove.png";
+import shoe from "@/assets/student-items/shoe.png";
 import studytable from "@/assets/student-items/studytable.png";
 import watch from "@/assets/student-items/watch.png";
 
@@ -26,6 +29,7 @@ import watch from "@/assets/student-items/watch.png";
 // Not a filter: cards are non-interactive and don't link anywhere.
 const ESSENTIALS = [
   { name: "Laptop", image: laptop },
+  { name: "Gym Equipment", image: gym },
   { name: "Mobile", image: mobile },
   { name: "Book", image: book },
   { name: "Calculator", image: calculator },
@@ -36,6 +40,7 @@ const ESSENTIALS = [
   { name: "Keyboard", image: keyboard },
   { name: "Mouse", image: mouse },
   { name: "Bicycle", image: bicycle },
+  { name: "Shoe", image: shoe },
   { name: "Blazer", image: blazer },
   { name: "Watch", image: watch },
   { name: "Study Table", image: studytable },
