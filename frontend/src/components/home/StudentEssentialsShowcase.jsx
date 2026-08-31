@@ -32,15 +32,15 @@ import watch from "@/assets/student-items/watch.png";
 // Not a filter: cards are non-interactive and don't link anywhere.
 const ESSENTIALS = [
   { name: "Laptop", image: laptop },
+  { name: "Calculator", image: calculator },
+  { name: "Keyboard", image: keyboard },
   { name: "Gym Gear", image: gym },
   { name: "Mobile", image: mobile },
   { name: "Book", image: book },
-  { name: "Calculator", image: calculator },
   { name: "Headphones", image: headphone },
   { name: "Earbuds", image: earbud },
   { name: "Earphones", image: earphone },
   { name: "Power Bank", image: powerbank },
-  { name: "Keyboard", image: keyboard },
   { name: "Mouse", image: mouse },
   { name: "Bicycle", image: bicycle },
   { name: "Study Table", image: studytable    },
