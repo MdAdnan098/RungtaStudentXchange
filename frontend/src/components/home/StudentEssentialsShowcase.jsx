@@ -33,10 +33,10 @@ import watch from "@/assets/student-items/watch.png";
 const ESSENTIALS = [
   { name: "Laptop", image: laptop },
   { name: "Calculator", image: calculator },
+  { name: "Book", image: book },
   { name: "Keyboard", image: keyboard },
   { name: "Gym Gear", image: gym },
   { name: "Mobile", image: mobile },
-  { name: "Book", image: book },
   { name: "Headphones", image: headphone },
   { name: "Earbuds", image: earbud },
   { name: "Earphones", image: earphone },
