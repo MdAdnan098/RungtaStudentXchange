@@ -104,14 +104,14 @@ const ScrollRow = ({ items, className = "" }) => {
     <div className="relative">
       {!atStart && (
         <>
-          {/* Mobile: dark solid chip, always visible */}
+          {/* Mobile: theme-aware chip, always visible, smaller */}
           <button
             type="button"
             aria-label="Scroll left"
             onClick={() => scrollByAmount(-1)}
-            className="absolute left-1.5 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full bg-text-primary/70 p-1.5 shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-text-primary/85 active:scale-95 sm:hidden"
+            className="absolute left-1 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface p-1 shadow-sm transition hover:scale-105 hover:bg-background-subtle active:scale-95 sm:hidden"
           >
-            <ChevronLeft className="h-4 w-4 text-white" />
+            <ChevronLeft className="h-3.5 w-3.5 text-text-secondary" />
           </button>
           {/* Desktop: fade + bordered disc */}
           <div className="pointer-events-none absolute left-0 top-0 z-10 hidden h-full w-14 bg-gradient-to-r from-background to-transparent sm:block" />
@@ -128,14 +128,14 @@ const ScrollRow = ({ items, className = "" }) => {
 
       {!atEnd && (
         <>
-          {/* Mobile: dark solid chip, always visible */}
+          {/* Mobile: theme-aware chip, always visible, smaller */}
           <button
             type="button"
             aria-label="Scroll right"
             onClick={() => scrollByAmount(1)}
-            className="absolute right-1.5 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full bg-text-primary/70 p-1.5 shadow-md backdrop-blur-sm transition hover:scale-105 hover:bg-text-primary/85 active:scale-95 sm:hidden"
+            className="absolute right-1 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface p-1 shadow-sm transition hover:scale-105 hover:bg-background-subtle active:scale-95 sm:hidden"
           >
-            <ChevronRight className="h-4 w-4 text-white" />
+            <ChevronRight className="h-3.5 w-3.5 text-text-secondary" />
           </button>
           {/* Desktop: fade + bordered disc */}
           <div className="pointer-events-none absolute right-0 top-0 z-10 hidden h-full w-14 bg-gradient-to-l from-background to-transparent sm:block" />
