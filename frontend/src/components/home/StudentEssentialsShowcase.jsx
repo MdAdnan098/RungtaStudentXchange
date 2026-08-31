@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 import bicycle from "@/assets/student-items/bicycle.png";
 import blazer from "@/assets/student-items/blazer.png";
 import book from "@/assets/student-items/book.png";
@@ -67,6 +70,79 @@ const EssentialCard = ({ name, image }) => (
   </li>
 );
 
+// One horizontally-scrollable row with fade edges + arrow buttons that
+// hint there's more content to scroll to. Arrows scroll by ~2 cards'
+// worth at a time and hide themselves at the start/end of the row.
+const ScrollRow = ({ items, className = "" }) => {
+  const scrollRef = useRef(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const updateEdges = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtStart(el.scrollLeft <= 4);
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
+  };
+
+  useEffect(() => {
+    updateEdges();
+    const el = scrollRef.current;
+    if (!el) return;
+    const onResize = () => updateEdges();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const scrollByAmount = (direction) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * el.clientWidth * 0.6, behavior: "smooth" });
+  };
+
+  return (
+    <div className="relative">
+      {!atStart && (
+        <>
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-10 bg-gradient-to-r from-background to-transparent" />
+          <button
+            type="button"
+            aria-label="Scroll left"
+            onClick={() => scrollByAmount(-1)}
+            className="absolute left-1 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface p-1.5 shadow-sm transition hover:scale-105 hover:bg-background-subtle sm:flex"
+          >
+            <ChevronLeft className="h-4 w-4 text-text-secondary" />
+          </button>
+        </>
+      )}
+
+      {!atEnd && (
+        <>
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10 bg-gradient-to-l from-background to-transparent" />
+          <button
+            type="button"
+            aria-label="Scroll right"
+            onClick={() => scrollByAmount(1)}
+            className="absolute right-1 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface p-1.5 shadow-sm transition hover:scale-105 hover:bg-background-subtle sm:flex"
+          >
+            <ChevronRight className="h-4 w-4 text-text-secondary" />
+          </button>
+        </>
+      )}
+
+      <ul
+        ref={scrollRef}
+        onScroll={updateEdges}
+        className={`scrollbar-hide flex snap-x snap-proximity gap-3 overflow-x-auto overscroll-x-contain scroll-px-1 pb-1 pl-1 pr-1 [-webkit-overflow-scrolling:touch] xs:gap-3.5 ${className}`}
+      >
+        {items.map((item) => (
+          <EssentialCard key={item.name} {...item} />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 /**
  * Hero visual: two staggered rows of small product cards below the
  * buttons, each row scrolling horizontally, so the showcase reads as
@@ -84,16 +160,8 @@ const StudentEssentialsShowcase = () => {
       className="w-full"
       aria-label="Examples of items students list on the marketplace"
     >
-      <ul className="scrollbar-hide flex snap-x snap-proximity gap-3 overflow-x-auto overscroll-x-contain scroll-px-1 pb-1 pl-1 pr-1 [-webkit-overflow-scrolling:touch] xs:gap-3.5">
-        {rowOne.map((item) => (
-          <EssentialCard key={item.name} {...item} />
-        ))}
-      </ul>
-      <ul className="scrollbar-hide mt-3.5 flex snap-x snap-proximity gap-3 overflow-x-auto overscroll-x-contain scroll-px-1 pb-1 pl-1 pr-1 [-webkit-overflow-scrolling:touch] xs:mt-4 xs:gap-3.5">
-        {rowTwo.map((item) => (
-          <EssentialCard key={item.name} {...item} />
-        ))}
-      </ul>
+      <ScrollRow items={rowOne} />
+      <ScrollRow items={rowTwo} className="mt-3.5 xs:mt-4" />
     </div>
   );
 };
