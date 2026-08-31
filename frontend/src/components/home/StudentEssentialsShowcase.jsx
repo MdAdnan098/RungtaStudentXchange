@@ -43,18 +43,19 @@ const ESSENTIALS = [
   { name: "Keyboard", image: keyboard },
   { name: "Mouse", image: mouse },
   { name: "Bicycle", image: bicycle },
+  { name: "Study Table", image: studytable    },
+  { name: "Mini Drafter", image: minidrafter },
+  { name: "Kettle", image: kettle },
   { name: "Shoe", image: shoe },
   { name: "Blazer", image: blazer },
   { name: "Watch", image: watch },
-  { name: "Study Table", image: studytable },
   { name: "Lamp", image: lamp },
   { name: "Fan", image: fan },
   { name: "Cooler", image: cooler },
   { name: "Induction", image: induction },
   { name: "Stove", image: stove },
-  { name: "Kettle", image: kettle },
   { name: "Iron", image: iron },
-  { name: "Mini Drafter", image: minidrafter },
+  
 ];
 
 const EssentialCard = ({ name, image }) => (
