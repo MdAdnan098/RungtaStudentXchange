@@ -23,8 +23,8 @@ export const phoneRule = {
 export const rungtaEmailRule = {
   required: "Apna Rungta email daalo",
   pattern: {
-    value: /^[^\s@]+@rungta\.org$/i,
-    message: "Sirf @rungta.org email allowed hai",
+    value: /^\d{7}@rungta\.org$/i,
+    message: "ERPid@rungta.org email fill kro",
   },
 };
 

@@ -40,7 +40,7 @@ if (
   });
 }
 if (purpose === "studentVerify") {
-      if (!/^[^\s@]+@rungta\.org$/i.test(email)) {
+      if (!/^\d{7}@rungta\.org$/i.test(email)) {
         return res.status(400).json({
           success: false,
           message: "Please use your Rungta email (yourERP@rungta.org)",
@@ -208,7 +208,7 @@ export const resendOTP = async (req, res) => {
       });
     }
 
-    if (purpose === "studentVerify" && !/^[^\s@]+@rungta\.org$/i.test(email)) {
+    if (purpose === "studentVerify" && !/^\d{7}@rungta\.org$/i.test(email)) {
       return res.status(400).json({
         success: false,
         message: "Please use your Rungta email (yourERP@rungta.org)",
