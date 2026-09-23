@@ -19,34 +19,40 @@ const COMMUNITY_TIPS = [
  * Fresh Listings, in the same card-padded style used across the
  * dashboard (ProfileHeader, StudentVerificationCard) so it doesn't
  * read as a one-off banner.
+ *
+ * Wrapped in .neon-border (see styles/index.css) — a slow rotating
+ * conic-gradient ring using the app's own brand tokens, so it adapts
+ * automatically to light/dark mode with no extra logic here.
  */
 const CommunitySection = () => {
   return (
     <Section aria-labelledby="community-heading">
       <PageContainer size="md">
-        <div className="card-padded !rounded-2xl !p-6 sm:!p-7">
-          <h2 id="community-heading" className="text-h4 leading-snug">
-            ❤️ Sabhi Students Ke Liye Kuch Zaruri Baatein
-          </h2>          
-          <ul className="mt-5 space-y-3.5 sm:mt-6">
-            {COMMUNITY_TIPS.map((tip) => {
-              const [icon, ...rest] = tip.split(" ");
-              const text = rest.join(" ");
-              return (
-                <li key={tip} className="flex items-start gap-3">
-                  <span className="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
-                    {icon}
-                  </span>
-                  <span className="text-body-sm leading-relaxed text-text-secondary">{text}</span>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="neon-border !rounded-2xl">
+          <div className="card-padded !rounded-2xl !p-6 sm:!p-7">
+            <h2 id="community-heading" className="text-h4 leading-snug">
+              ❤️ Sabhi Students Ke Liye Kuch Zaruri Baatein
+            </h2>
+            <ul className="mt-5 space-y-3.5 sm:mt-6">
+              {COMMUNITY_TIPS.map((tip) => {
+                const [icon, ...rest] = tip.split(" ");
+                const text = rest.join(" ");
+                return (
+                  <li key={tip} className="flex items-start gap-3">
+                    <span className="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
+                      {icon}
+                    </span>
+                    <span className="text-body-sm leading-relaxed text-text-secondary">{text}</span>
+                  </li>
+                );
+              })}
+            </ul>
 
-          <div className="divider mt-6 pt-5 sm:mt-7 sm:pt-6">
-            <p className="text-body-sm font-medium italic leading-relaxed text-text-secondary">
-              🤝 Aapka thoda sa cooperation, har student ke liye ek better aur safer marketplace bana sakta hai.
-            </p>
+            <div className="divider mt-6 pt-5 sm:mt-7 sm:pt-6">
+              <p className="text-body-sm font-medium italic leading-relaxed text-text-secondary">
+                🤝 Aapka thoda sa cooperation, har student ke liye ek better aur safer marketplace bana sakta hai.
+              </p>
+            </div>
           </div>
         </div>
       </PageContainer>

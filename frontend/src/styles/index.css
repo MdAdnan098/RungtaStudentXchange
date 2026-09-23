@@ -327,3 +327,44 @@
     display: none;
   }
 }
+
+/* ---- Neon rotating border (Community guidelines card) -------------------- */
+.neon-border {
+  position: relative;
+  isolation: isolate;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.neon-border::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 250deg,
+    rgb(var(--color-primary)) 270deg,
+    rgb(var(--color-accent)) 300deg,
+    rgb(var(--color-warning)) 320deg,
+    rgb(var(--color-danger)) 340deg,
+    transparent 360deg
+  );
+  animation: neon-border-spin 6s linear infinite;
+  z-index: 0;
+}
+
+.neon-border > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes neon-border-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
