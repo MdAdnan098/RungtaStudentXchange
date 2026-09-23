@@ -155,13 +155,14 @@ const [isRevoking, setIsRevoking] = useState(false);
           </p>
 
           <button
-  type="button"
-  onClick={() => setShowRevokeConfirm(true)}
-  className="btn-danger-ghost btn-sm mt-4"
->
-  <ShieldOff className="h-4 w-4" aria-hidden="true" />
-  Remove verification
-</button>
+            type="button"
+            onClick={() => setShowRevokeConfirm(true)}
+            className="btn-danger-ghost btn-sm mt-4"
+          >
+            <ShieldOff className="h-4 w-4" aria-hidden="true" />
+            Remove verification
+          </button>
+        </div>
 
         <Modal isOpen={showRevokeConfirm} onClose={() => setShowRevokeConfirm(false)} titleId="revoke-verify-title">
           <ModalHeader
