@@ -40,51 +40,50 @@ const CommunitySection = () => {
   return (
     <Section aria-labelledby="community-heading">
       <PageContainer size="md">
-          <div className="neon-border !rounded-2xl">
-            <div className="card-padded !rounded-2xl !p-6 sm:!p-7">
-              <h2 id="community-heading" className="text-h4 leading-snug">
-                ❤️ Sabhi Students Ke Liye Kuch Zaruri Baatein
-              </h2>
+        <div className="neon-border !rounded-2xl">
+          <div className="card-padded !rounded-2xl !p-6 sm:!p-7">
+            <h2 id="community-heading" className="text-h4 leading-snug">
+              ❤️ Sabhi Students Ke Liye Kuch Zaruri Baatein
+            </h2>
 
-              <ul
-                className={cn(
-                  "mt-5 space-y-3.5 overflow-hidden transition-[max-height] duration-300 ease-standard sm:mt-6 sm:!max-h-none sm:!overflow-visible",
-                  expanded ? "max-h-[2000px]" : "max-h-48",
-                )}
-              >
-                {COMMUNITY_TIPS.map((tip) => {
-                  const [icon, ...rest] = tip.split(" ");
-                  const text = rest.join(" ");
-                  return (
-                    <li key={tip} className="flex items-start gap-3">
-                      <span className="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
-                        {icon}
-                      </span>
-                      <span className="text-body-sm leading-relaxed text-text-secondary">{text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              {hasOverflow && (
-                <button
-                  type="button"
-                  onClick={() => setExpanded((value) => !value)}
-                  className="mt-4 flex items-center gap-1.5 rounded-full bg-primary-subtle px-3.5 py-1.5 text-body-sm font-medium text-primary-subtle-text transition-colors duration-base ease-standard hover:bg-primary/10 sm:hidden"
-                >
-                  {expanded ? "Show Less" : "Show More"}
-                  <ChevronDown
-                    className={cn("h-4 w-4 transition-transform duration-base", expanded && "rotate-180")}
-                    aria-hidden="true"
-                  />
-                </button>
+            <ul
+              className={cn(
+                "mt-5 space-y-3.5 overflow-hidden transition-[max-height] duration-300 ease-standard sm:mt-6 sm:!max-h-none sm:!overflow-visible",
+                expanded ? "max-h-[2000px]" : "max-h-48",
               )}
+            >
+              {COMMUNITY_TIPS.map((tip) => {
+                const [icon, ...rest] = tip.split(" ");
+                const text = rest.join(" ");
+                return (
+                  <li key={tip} className="flex items-start gap-3">
+                    <span className="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">
+                      {icon}
+                    </span>
+                    <span className="text-body-sm leading-relaxed text-text-secondary">{text}</span>
+                  </li>
+                );
+              })}
+            </ul>
 
-              <div className="divider mt-6 pt-5 sm:mt-7 sm:pt-6">
-                <p className="text-body-sm font-medium italic leading-relaxed text-text-secondary">
-                  🤝 Aapka thoda sa cooperation, har student ke liye ek better aur safer marketplace bana sakta hai.
-                </p>
-              </div>
+            {hasOverflow && (
+              <button
+                type="button"
+                onClick={() => setExpanded((value) => !value)}
+                className="mt-4 flex items-center gap-1.5 rounded-full bg-primary-subtle px-3.5 py-1.5 text-body-sm font-medium text-primary-subtle-text transition-colors duration-base ease-standard hover:bg-primary/10 sm:hidden"
+              >
+                {expanded ? "Show Less" : "Show More"}
+                <ChevronDown
+                  className={cn("h-4 w-4 transition-transform duration-base", expanded && "rotate-180")}
+                  aria-hidden="true"
+                />
+              </button>
+            )}
+
+            <div className="divider mt-6 pt-5 sm:mt-7 sm:pt-6">
+              <p className="text-body-sm font-medium italic leading-relaxed text-text-secondary">
+                🤝 Aapka thoda sa cooperation, har student ke liye ek better aur safer marketplace bana sakta hai.
+              </p>
             </div>
           </div>
         </div>
