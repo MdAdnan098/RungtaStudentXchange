@@ -329,15 +329,12 @@
 }
 
 /* ---- Neon rotating border (Community guidelines card) -------------------- */
-.neon-border {
+.neon-glow-wrap {
   position: relative;
   isolation: isolate;
-  padding: 5px;
-  overflow: hidden;
 }
 
-.neon-border::before,
-.neon-border::after {
+.neon-glow-wrap::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -360,17 +357,44 @@
     transparent 348deg,
     transparent 360deg
   );
-  animation: neon-border-spin 6s linear infinite;
+  filter: blur(20px);
+  opacity: 0.9;
+  z-index: -1;
+  animation: neon-border-spin 4s linear infinite;
+}
+
+.neon-border {
+  position: relative;
+  isolation: isolate;
+  padding: 5px;
+  overflow: hidden;
 }
 
 .neon-border::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 240deg,
+    #ff2fd3 250deg,
+    #00e5ff 262deg,
+    #ffea00 274deg,
+    #2979ff 286deg,
+    #ff9100 298deg,
+    #00e676 310deg,
+    #ff1744 322deg,
+    #d500f9 334deg,
+    transparent 348deg,
+    transparent 360deg
+  );
+  animation: neon-border-spin 4s linear infinite;
   z-index: 0;
-}
-
-.neon-border::after {
-  z-index: -1;
-  filter: blur(10px);
-  opacity: 0.85;
 }
 
 .neon-border > * {
