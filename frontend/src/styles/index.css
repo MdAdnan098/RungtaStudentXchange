@@ -332,11 +332,12 @@
 .neon-border {
   position: relative;
   isolation: isolate;
-  padding: 2px;
+  padding: 5px;
   overflow: hidden;
 }
 
-.neon-border::before {
+.neon-border::before,
+.neon-border::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -347,15 +348,29 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    transparent 250deg,
-    rgb(var(--color-primary)) 270deg,
-    rgb(var(--color-accent)) 300deg,
-    rgb(var(--color-warning)) 320deg,
-    rgb(var(--color-danger)) 340deg,
+    transparent 240deg,
+    #ff2fd3 250deg,
+    #00e5ff 262deg,
+    #ffea00 274deg,
+    #2979ff 286deg,
+    #ff9100 298deg,
+    #00e676 310deg,
+    #ff1744 322deg,
+    #d500f9 334deg,
+    transparent 348deg,
     transparent 360deg
   );
   animation: neon-border-spin 6s linear infinite;
+}
+
+.neon-border::before {
   z-index: 0;
+}
+
+.neon-border::after {
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0.85;
 }
 
 .neon-border > * {
