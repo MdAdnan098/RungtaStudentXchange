@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { AlertTriangle, BadgeCheck, ShieldCheck } from "lucide-react";
+import { AlertTriangle, BadgeCheck, ShieldCheck, ShieldOff } from "lucide-react";
 import { sendOtp, verifyOtp, resendOtp } from "@/api/otp";
 import { revokeMyVerification } from "@/api/users";
 import { useAuthStore } from "@/store/authStore";
@@ -155,13 +155,13 @@ const [isRevoking, setIsRevoking] = useState(false);
           </p>
 
           <button
-            type="button"
-            onClick={() => setShowRevokeConfirm(true)}
-            className="mt-4 text-body-sm text-text-muted hover:text-danger-text transition-colors duration-base ease-standard"
-          >
-            Remove verification
-          </button>
-        </div>
+  type="button"
+  onClick={() => setShowRevokeConfirm(true)}
+  className="btn-danger-ghost btn-sm mt-4"
+>
+  <ShieldOff className="h-4 w-4" aria-hidden="true" />
+  Remove verification
+</button>
 
         <Modal isOpen={showRevokeConfirm} onClose={() => setShowRevokeConfirm(false)} titleId="revoke-verify-title">
           <ModalHeader
