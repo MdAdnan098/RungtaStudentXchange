@@ -40,7 +40,6 @@ const CommunitySection = () => {
   return (
     <Section aria-labelledby="community-heading">
       <PageContainer size="md">
-        <div className="neon-glow-wrap !rounded-2xl">
           <div className="neon-border !rounded-2xl">
             <div className="card-padded !rounded-2xl !p-6 sm:!p-7">
               <h2 id="community-heading" className="text-h4 leading-snug">
