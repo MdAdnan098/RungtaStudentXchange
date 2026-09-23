@@ -27,6 +27,7 @@ export const authLimiter = rateLimit({
 export const otpRequestLimiter = rateLimit({
   windowMs: Number(process.env.OTP_RATE_LIMIT_WINDOW_MS) || 10 * 60 * 1000,
   max: Number(process.env.OTP_RATE_LIMIT_MAX_REQUESTS) || 5,
+  keyGenerator: (req) => req.user?._id?.toString() || req.body?.email || req.ip,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
