@@ -130,7 +130,7 @@ const [isRevoking, setIsRevoking] = useState(false);
 
         <div className="mt-5 border-t border-border pt-5">
           <Link to="/register" className="btn-primary w-full sm:w-auto">
-            Create &amp Verify Your Account
+            Create & Verify Your Account
           </Link>
         </div>
       </div>
