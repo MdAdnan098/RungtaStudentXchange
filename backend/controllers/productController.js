@@ -24,7 +24,7 @@ export const getAllProducts = async (req, res) => {
 
     query = applyPagination(query, req.query);
 
-    const products = await query.populate("seller", "name avatar isStudentVerified");
+    const products = await query.populate("seller", "name avatar isStudentVerified").lean();
 
     return res.status(200).json({
       success: true,
@@ -53,7 +53,7 @@ export const getProductById = async (req, res) => {
     const product = await Product.findById(req.params.id).populate(
       "seller",
       "name avatar isStudentVerified location"
-    );
+    ).lean();
 
     if (!product) {
       return res.status(404).json({

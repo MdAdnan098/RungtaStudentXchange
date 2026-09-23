@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import compression from "compression";
 
 import connectDB from "./config/db.js";
 
@@ -33,6 +34,7 @@ app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(morgan("dev"));
+app.use(compression());
 app.use(express.json());
 
 // Lightweight, no-DB-dependency endpoint for uptime pingers (e.g.

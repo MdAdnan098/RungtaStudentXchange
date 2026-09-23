@@ -6,12 +6,12 @@ import {
   resetPassword,
 } from "../controllers/passwordResetController.js";
 import { protect } from "../middleware/authMiddleware.js";
-import { otpRequestLimiter } from "../middleware/rateLimiter.js";
+import { otpRequestLimiter, authLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", authLimiter, registerUser);
+router.post("/login", authLimiter, loginUser);
 router.post("/admin/register", registerAdmin);
 router.post("/admin/login", loginAdmin);
 router.post("/admin/forgot-password", resetAdminPassword);
