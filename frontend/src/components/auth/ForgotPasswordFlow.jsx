@@ -71,7 +71,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
       startResendCooldown();
     } catch (error) {
       setSubmitError(
-        getErrorMessage(error, "😕 Mobile number aur email match nahi kar rahe. Ek baar details dobara check karo.")
+        getErrorMessage(error, "😕 Mobile number and email do not match. Please check the details again.")
       );
     }
   };
@@ -87,7 +87,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
       setResetToken(response.data.data.resetToken);
       setStep("reset");
     } catch (error) {
-      setSubmitError(getErrorMessage(error, "😕 OTP match nahi hua. Ek baar dobara check karke try karo."));
+      setSubmitError(getErrorMessage(error, "😕 OTP did not match. Please double-check and try again."));
     }
   };
 
@@ -95,10 +95,10 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
     if (resendCooldown > 0) return;
     try {
       const response = await sendPasswordResetOtp(details);
-      toast.success(response.data.message || "OTP dobara bhej diya");
+      toast.success(response.data.message || "OTP has been resent.");
       startResendCooldown();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Resend nahi ho paaya, thodi der me try karo"));
+      toast.error(getErrorMessage(error, "Failed to resend OTP, please try again after some time."));
     }
   };
 
@@ -106,11 +106,11 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
     setSubmitError(null);
     try {
       const response = await resetPassword({ resetToken, password: formData.password });
-      toast.success(response.data.message || "🎉 Password successfully reset ho gaya!");
+      toast.success(response.data.message || "🎉 Password has been reset successfully!");
       setStep("done");
       setTimeout(() => onDone?.(), 1500);
     } catch (error) {
-      setSubmitError(getErrorMessage(error, "Password reset nahi ho paaya, dobara try karo"));
+      setSubmitError(getErrorMessage(error, "*Password reset failed. Please try again."));
     }
   };
 
@@ -121,7 +121,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
         <AuthCardHeader
           icon={isDone ? <CheckCircle2 className="h-5 w-5" aria-hidden="true" /> : <KeyRound className="h-5 w-5" aria-hidden="true" />}
           title={isDone ? "You're all set!" : "Set a new password"}
-          subtitle={isDone ? "Password updated ✅" : "OTP verify ho gaya ✅ Ab apna naya password choose kar lo."}
+          subtitle={isDone ? "Password updated ✅" : "OTP verified successfully! ✅ Now, please create your new password."}
           stepIndex={3}
           stepCount={3}
         />
@@ -132,7 +132,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
             <PasswordField
               id="reset-password-new"
               label="New password"
-              placeholder="Naya password"
+              placeholder="Choose a new password"
               registration={resetForm.register("password", passwordRule)}
               error={resetForm.formState.errors.password?.message}
             />
@@ -140,7 +140,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
             <PasswordField
               id="reset-password-confirm"
               label="Confirm password"
-              placeholder="Password dobara dalo"
+              placeholder="Re-enter your new password"
               registration={resetForm.register(
                 "confirmPassword",
                 confirmPasswordRule(() => resetForm.getValues("password"))
@@ -187,7 +187,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
           <FormError message={submitError} />
 
           <FormNote icon={<Mail className="h-4 w-4" aria-hidden="true" />}>
-            📩 OTP tumhare email par bhej diya hai. Inbox (aur Spam folder bhi 😄) ek baar check kar lena.
+            📩 OTP tumhare email par bhej diya hai. Inbox (aur Spam folder bhi) ek baar check kar lena.
           </FormNote>
 
           <TextField
@@ -256,8 +256,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
         <FormError message={submitError} />
 
         <FormNote>
-          Apna registered mobile number aur email dalo. Dono match hote hi hum ek OTP bhej denge — 30 second se bhi
-          kam lagega 🙂
+          Enter your registered mobile number and email. Once both match, we will send you an OTP.🙂
         </FormNote>
 
         <div className="space-y-5">
@@ -279,7 +278,7 @@ const ForgotPasswordFlow = ({ onCancel, onDone }) => {
             label="Recovery email"
             type="email"
             autoComplete="email"
-            placeholder="Registration ke time wala email"
+            placeholder="Enter the email address used during registration."
             icon={<Mail className="h-4 w-4" aria-hidden="true" />}
             registration={detailsForm.register("email", emailRule)}
             error={detailsForm.formState.errors.email?.message}
