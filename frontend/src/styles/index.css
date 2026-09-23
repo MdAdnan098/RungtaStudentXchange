@@ -339,26 +339,21 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 200%;
+  width: 130%;
+  height: 130%;
   transform: translate(-50%, -50%) rotate(0deg);
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
     transparent 240deg,
-    #ff2fd3 250deg,
-    #00e5ff 262deg,
-    #ffea00 274deg,
-    #2979ff 286deg,
-    #ff9100 298deg,
-    #00e676 310deg,
-    #ff1744 322deg,
-    #d500f9 334deg,
-    transparent 348deg,
+    #ff2fd3 260deg,
+    #00e5ff 290deg,
+    #2979ff 320deg,
+    transparent 340deg,
     transparent 360deg
   );
-  filter: blur(20px);
-  opacity: 0.9;
+  filter: blur(14px);
+  opacity: 0.55;
   z-index: -1;
   animation: neon-border-spin 4s linear infinite;
 }
@@ -382,15 +377,10 @@
     from 0deg,
     transparent 0deg,
     transparent 240deg,
-    #ff2fd3 250deg,
-    #00e5ff 262deg,
-    #ffea00 274deg,
-    #2979ff 286deg,
-    #ff9100 298deg,
-    #00e676 310deg,
-    #ff1744 322deg,
-    #d500f9 334deg,
-    transparent 348deg,
+    #ff2fd3 260deg,
+    #00e5ff 290deg,
+    #2979ff 320deg,
+    transparent 340deg,
     transparent 360deg
   );
   animation: neon-border-spin 4s linear infinite;
