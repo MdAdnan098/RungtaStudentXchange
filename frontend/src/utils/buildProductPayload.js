@@ -7,7 +7,7 @@
 export const buildProductPayload = (values, uploadedImages, mode) => {
   const payload = {
     title: values.title.trim(),
-    description: values.description.trim(),
+    description: values.description?.trim() || null,
     price: Number(values.price),
     category: values.category,
     condition: values.condition,
@@ -35,12 +35,16 @@ export const buildProductPayload = (values, uploadedImages, mode) => {
     .split(",")
     .map((tag) => tag.trim())
     .filter(Boolean);
+
   if (tags.length > 0) {
     payload.tags = tags;
   }
 
   if (uploadedImages && uploadedImages.length > 0) {
-    payload.images = uploadedImages.map(({ url, fileId }) => ({ url, fileId }));
+    payload.images = uploadedImages.map(({ url, fileId }) => ({
+      url,
+      fileId,
+    }));
   }
 
   return payload;

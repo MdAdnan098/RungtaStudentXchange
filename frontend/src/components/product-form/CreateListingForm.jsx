@@ -124,37 +124,32 @@ const CreateListingForm = ({ onSuccess }) => {
       setImagesError(`At least ${MIN_IMAGES} image is required`);
       return;
     }
+
     setImagesError(null);
     setSubmitError(null);
 
-    // Uploads every image straight to ImageKit (in parallel) first,
-    // then creates the listing with the resulting URLs — repeated for
-    // both the initial try and the silent retry below, same as the
-    // old FormData rebuild used to be.
     const attemptUpload = async () => {
       setUploadProgress(0);
-      const uploadedImages = await Promise.all(images.map((image) => uploadToImageKit(image.file, "products")));
+
+      const uploadedImages = await Promise.all(
+        images.map((image) => uploadToImageKit(image.file, "products"))
+      );
+
       const payload = buildProductPayload(values, uploadedImages, "create");
+
       return createProduct(payload);
     };
 
     try {
       const response = await attemptUpload();
+
       toast.success(response.data.message || "Listing created");
       onSuccess(response.data.data.product);
     } catch (error) {
-      // `!error.response` is a true network-layer failure (no HTTP
-      // response received at all) — most often the Render free-tier
-      // backend waking up from a cold start (first request after a
-      // period of inactivity can time out before the instance is
-      // fully up). Retrying once, silently, gives that instance a
-      // second chance to respond now that it's already awake — the
-      // user only ever sees the error if this retry ALSO fails,
-      // instead of having to manually remove/re-select the image to
-      // trigger a second attempt themselves.
       if (!error.response) {
         try {
           const retryResponse = await attemptUpload();
+
           toast.success(retryResponse.data.message || "Listing created");
           onSuccess(retryResponse.data.data.product);
           return;
@@ -170,68 +165,60 @@ const CreateListingForm = ({ onSuccess }) => {
       } else {
         setSubmitError(getErrorMessage(error, "Failed to create listing"));
       }
+
       setUploadProgress(null);
     }
   };
 
-  // Fires on tap/click of "Publish Listing", synchronously before the
-  // native "submit" event (and therefore before react-hook-form's
-  // validation and its own focus-driven scroll). This MUST be an
-  // instant ("auto") jump rather than "smooth": a smooth scroll is an
-  // animation spread across several frames, so if validation later
-  // fails, RHF's default shouldFocusError behavior calls .focus() on
-  // the invalid field, and the browser's native (instant) focus-scroll
-  // interrupts our still-in-progress animation — the user never
-  // actually sees the top-scroll. An instant jump completes
-  // synchronously inside this click handler, before the submit event
-  // even fires, so it always happens first — with the existing
-  // validation-scroll (unchanged) simply layering on top of it right
-  // after. Mobile only, per the brief; desktop is untouched since the
-  // button and its error message are already in view there.
-  //
-  // window.scrollTo(0, 0) rather than a ref + scrollIntoView on the
-  // first FormSection: CreateListing.jsx renders a page header
-  // ("Create a listing" title + subtext) above this <form>. Anchoring
-  // to the Photos section (the form's first child) left that header
-  // off-screen — the user landed at the top of the form, not the top
-  // of the page. window.scrollTo always reaches the true page top no
-  // matter what the parent page renders above the form.
   const handlePublishClick = () => {
     if (window.innerWidth < MOBILE_BREAKPOINT) {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="pb-28 sm:pb-0">
-      {/* Desktop: submit-time error stays at the very top of the form,
-          exactly as before. Mobile has its own copy further down (see
-          after the Location & contact section) so this one is hidden
-          there to avoid showing the same message twice. */}
       <div className="hidden sm:block">
         <FormError message={submitError} />
       </div>
 
       <div className="space-y-6">
         <FormSection icon={Camera} title="Photos">
-          <CreateListingImageUploader images={images} onChange={setImages} error={imagesError} />
+          <CreateListingImageUploader
+            images={images}
+            onChange={setImages}
+            error={imagesError}
+          />
         </FormSection>
 
         <FormSection icon={ClipboardList} title="Item details">
           <TextField
             id="product-title"
-            label="Title"
+            label={
+              <>
+                Title <span className="text-red-500">*</span>
+              </>
+            }
             placeholder="e.g. Casio FX-991ES Scientific Calculator"
             registration={register("title", titleRule)}
             error={errors.title?.message}
             maxLength={100}
           />
-          <div className="-mt-3 text-right text-caption text-text-muted">{titleValue.length}/100</div>
+
+          <div className="-mt-3 text-right text-caption text-text-muted">
+            {titleValue.length}/100
+          </div>
 
           <div>
             <label htmlFor="product-description" className="field-label">
-              Description
+              Description{" "}
+              <span className="text-text-muted">(Optional)</span>
             </label>
+
             <textarea
               id="product-description"
               rows={5}
@@ -240,21 +227,28 @@ const CreateListingForm = ({ onSuccess }) => {
               className={`textarea ${errors.description ? "input-error" : ""}`}
               {...register("description", descriptionRule)}
             />
+
             <div className="mt-1.5 flex items-center justify-between">
               {errors.description ? (
                 <p className="field-error !mt-0">{errors.description.message}</p>
               ) : (
-                <span className="text-caption text-text-muted">Minimum 10 characters</span>
+                <span className="text-caption text-text-muted">
+                  Minimum 10 characters
+                </span>
               )}
-              <span className="shrink-0 text-caption text-text-muted">{descriptionValue.length}/1000</span>
+
+              <span className="shrink-0 text-caption text-text-muted">
+                {descriptionValue.length}/1000
+              </span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="product-category" className="field-label">
-                Category
+                Category <span className="text-red-500">*</span>
               </label>
+
               <select
                 id="product-category"
                 className={`select py-3 ${errors.category ? "input-error" : ""}`}
@@ -263,19 +257,24 @@ const CreateListingForm = ({ onSuccess }) => {
                 <option value="" disabled>
                   Select a category
                 </option>
+
                 {CATEGORIES.map((category) => (
                   <option key={category} value={category}>
                     {category}
                   </option>
                 ))}
               </select>
-              {errors.category && <p className="field-error">{errors.category.message}</p>}
+
+              {errors.category && (
+                <p className="field-error">{errors.category.message}</p>
+              )}
             </div>
 
             <div>
               <label htmlFor="product-condition" className="field-label">
-                Condition
+                Condition <span className="text-red-500">*</span>
               </label>
+
               <select
                 id="product-condition"
                 className={`select py-3 ${errors.condition ? "input-error" : ""}`}
@@ -284,13 +283,17 @@ const CreateListingForm = ({ onSuccess }) => {
                 <option value="" disabled>
                   Select condition
                 </option>
+
                 {CONDITIONS.map((condition) => (
                   <option key={condition} value={condition}>
                     {condition}
                   </option>
                 ))}
               </select>
-              {errors.condition && <p className="field-error">{errors.condition.message}</p>}
+
+              {errors.condition && (
+                <p className="field-error">{errors.condition.message}</p>
+              )}
             </div>
           </div>
 
@@ -298,13 +301,18 @@ const CreateListingForm = ({ onSuccess }) => {
             <label htmlFor="product-tags" className="field-label">
               Tags (optional)
             </label>
+
             <input
               id="product-tags"
               className="input"
               placeholder="e.g. scientific, exam, calculator"
               {...register("tags")}
             />
-            <p className="field-hint">Comma-separated — helps buyers find this listing when searching.</p>
+
+            <p className="field-hint">
+              Comma-separated — helps buyers find this listing when searching.
+            </p>
+
             {tagChips.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {tagChips.map((tag, index) => (
@@ -320,7 +328,11 @@ const CreateListingForm = ({ onSuccess }) => {
         <FormSection icon={IndianRupee} title="Price">
           <TextField
             id="product-price"
-            label="Price (₹)"
+            label={
+              <>
+                Price (₹) <span className="text-red-500">*</span>
+              </>
+            }
             type="number"
             inputMode="decimal"
             min="0"
@@ -343,6 +355,7 @@ const CreateListingForm = ({ onSuccess }) => {
               className="h-4.5 w-4.5 rounded accent-primary"
               {...register("negotiable")}
             />
+
             Price is negotiable
           </label>
         </FormSection>
@@ -359,14 +372,22 @@ const CreateListingForm = ({ onSuccess }) => {
             <div>
               <TextField
                 id="product-whatsapp"
-                label="WhatsApp Number"
+                label={
+                  <>
+                    WhatsApp Number{" "}
+                    <span className="text-red-500">*</span>
+                  </>
+                }
                 type="tel"
                 inputMode="numeric"
                 placeholder="10-digit number"
                 registration={register("whatsappNumber", whatsappNumberRule)}
                 error={errors.whatsappNumber?.message}
               />
-              <p className="field-hint">Shown to buyers so they can contact you directly on WhatsApp.</p>
+
+              <p className="field-hint">
+                Shown to buyers so they can contact you directly on WhatsApp.
+              </p>
             </div>
 
             <div>
@@ -376,19 +397,21 @@ const CreateListingForm = ({ onSuccess }) => {
                 type="tel"
                 inputMode="numeric"
                 placeholder="10-digit number"
-                registration={register("alternateNumber", alternateNumberRule)}
+                registration={register(
+                  "alternateNumber",
+                  alternateNumberRule
+                )}
                 error={errors.alternateNumber?.message}
               />
-              <p className="field-hint">In case a buyer can't reach you on WhatsApp, they can call this number.</p>
+
+              <p className="field-hint">
+                In case a buyer can't reach you on WhatsApp, they can call this
+                number.
+              </p>
             </div>
           </div>
         </FormSection>
 
-        {/* Mobile-only copy of the submit-time error, placed in the
-            gap right after the last form section (below the Alternate
-            Number field) so it lands above the fixed bottom
-            Cancel/Publish bar instead of at the top of the page.
-            Desktop keeps the original top-of-form placement above. */}
         <div className="sm:hidden">
           <FormError message={submitError} />
         </div>
@@ -397,7 +420,10 @@ const CreateListingForm = ({ onSuccess }) => {
       {uploadProgress !== null && isSubmitting && (
         <div className="mt-6 card-padded flex items-center justify-center gap-3 py-6">
           <LoadingSpinner size="md" className="text-primary" />
-          <p className="field-hint !mb-0">Uploading your listing…</p>
+
+          <p className="field-hint !mb-0">
+            Uploading your listing…
+          </p>
         </div>
       )}
 
@@ -406,11 +432,19 @@ const CreateListingForm = ({ onSuccess }) => {
           "fixed inset-x-0 bottom-0 z-fixed flex gap-3 border-t border-border bg-surface/95 px-4 py-3 backdrop-blur-sm",
           "sm:static sm:z-auto sm:mt-6 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none"
         )}
-        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        style={{
+          paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))",
+        }}
       >
-        <button type="button" onClick={handleCancel} className="btn-ghost !rounded-xl btn-tactile" disabled={isSubmitting}>
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="btn-ghost !rounded-xl btn-tactile"
+          disabled={isSubmitting}
+        >
           Cancel
         </button>
+
         <button
           type="submit"
           onClick={handlePublishClick}
@@ -418,6 +452,7 @@ const CreateListingForm = ({ onSuccess }) => {
           disabled={isSubmitting}
         >
           {isSubmitting && <LoadingSpinner size="sm" />}
+
           {isSubmitting ? "Publishing…" : "Publish Listing"}
         </button>
       </div>
