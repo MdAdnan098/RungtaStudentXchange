@@ -18,8 +18,8 @@ const RESEND_COOLDOWN_S = 30;
 // ForgotPassword, which also uses otpRule but wasn't part of this
 // request.
 const otpRuleHinglish = {
-  required: "OTP dalna zaroori hai",
-  pattern: { value: /^\d{6}$/, message: "OTP 6 digit ka hona chahiye" },
+  required: "OTP is required.",
+  pattern: { value: /^\d{6}$/, message: "OTP must be 6 digits." },
 };
 
 /**
@@ -63,12 +63,12 @@ const StudentVerificationCard = () => {
     setSubmitError(null);
     try {
       const response = await sendOtp({ email: formData.email });
-      toast.success(response.data.message || "OTP bhej diya");
+      toast.success(response.data.message || "OTP sent successfully!");
       setSentToEmail(formData.email);
       setStep("otp");
       startResendCooldown();
     } catch (error) {
-      setSubmitError(getErrorMessage(error, "OTP nahi bhej paaye, dobara try karo"));
+      setSubmitError(getErrorMessage(error, "Failed to send OTP. Please try again."));
     }
   };
 
@@ -79,7 +79,7 @@ const StudentVerificationCard = () => {
       setUser(response.data.data.user);
       toast.success("Verified! Now you are officially Verified Rungta Student.");
     } catch (error) {
-      setSubmitError(getErrorMessage(error, "OTP match nahi hua. dobara check karke try karo."));
+      setSubmitError(getErrorMessage(error, "The OTP you entered is incorrect. Please try again."));
     }
   };
 
@@ -87,10 +87,10 @@ const StudentVerificationCard = () => {
     if (resendCooldown > 0) return;
     try {
       const response = await resendOtp({ email: sentToEmail });
-      toast.success(response.data.message || "OTP dobara bhej diya");
+      toast.success(response.data.message || "OTP has been resent.");
       startResendCooldown();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Resend nahi ho paaya, thodi der me try karo"));
+      toast.error(getErrorMessage(error, "Failed to resend OTP. Please try again in a moment."));
     }
   };
 
@@ -105,14 +105,14 @@ const StudentVerificationCard = () => {
           <div>
             <h2 className="text-h5 leading-snug">😕 Abhi tum as a guest browse kar rahe ho.</h2>
             <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
-              Pehle apna account banao, phir apni official Rungta Student Email ID se verify kar lo.
+              First, create your account, then verify it using your official Rungta student email ID.
             </p>
           </div>
         </div>
 
         <div className="mt-5 border-t border-border pt-5">
           <Link to="/register" className="btn-primary w-full sm:w-auto">
-            Account Banao &amp; Verify Karo
+            Create &amp Verify Your Account
           </Link>
         </div>
       </div>
@@ -150,8 +150,7 @@ const StudentVerificationCard = () => {
         <div>
           <h2 className="text-h5 leading-snug">😕 Tumne abhi tak apni Rungta Student Email ID se verify nahi kiya hai.</h2>
           <p className="mt-2 max-w-lg text-body-sm leading-relaxed text-text-muted">
-            🛡️ Verified Student badge se doosre students ko tumhare profile par bharosa hota hai aur
-            buying-selling zyada safe ho jaati hai. Bas ek minute ka kaam hai.
+            🛡️ The Verified Student badge helps build trust with other students and makes buying and selling safer. It only takes a minute.
           </p>
         </div>
       </div>
@@ -166,7 +165,7 @@ const StudentVerificationCard = () => {
               label="Rungta Email"
               type="email"
               autoComplete="off"
-              placeholder="Apna Rungta email dalo (example: yourERP@rungta.org)"
+              placeholder="Rungta email (e.g., yourERP@rungta.org)"
               registration={emailForm.register("email", rungtaEmailRule)}
               error={emailForm.formState.errors.email?.message}
             />
@@ -177,7 +176,7 @@ const StudentVerificationCard = () => {
               className="btn-primary mt-4 w-full sm:w-auto"
             >
               {emailForm.formState.isSubmitting && <LoadingSpinner size="sm" />}
-              {emailForm.formState.isSubmitting ? "Bhej rahe hain…" : "Send OTP"}
+              {emailForm.formState.isSubmitting ? "Sending…" : "Send OTP"}
             </button>
           </form>
         )}
@@ -206,7 +205,7 @@ const StudentVerificationCard = () => {
                 className="btn-primary sm:w-auto"
               >
                 {otpForm.formState.isSubmitting && <LoadingSpinner size="sm" />}
-                {otpForm.formState.isSubmitting ? "Verify ho raha hai…" : "Verify Karo"}
+                {otpForm.formState.isSubmitting ? "Verifying…" : "Verify"}
               </button>
 
               <button
@@ -215,7 +214,7 @@ const StudentVerificationCard = () => {
                 disabled={resendCooldown > 0}
                 className="text-body-sm text-primary hover:text-primary-hover transition-colors duration-base ease-standard disabled:cursor-not-allowed disabled:text-text-muted"
               >
-                {resendCooldown > 0 ? `${resendCooldown}s mein dobara bhejo` : "Code Dobara Bhejo"}
+                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
               </button>
 
               <button
