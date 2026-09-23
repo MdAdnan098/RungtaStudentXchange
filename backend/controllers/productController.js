@@ -95,12 +95,12 @@ export const createProduct = async (req, res) => {
       alternateNumber,
     } = req.body;
 
-    if (!title || !description || !price || !category || !condition) {
-      return res.status(400).json({
-        success: false,
-        message: "Title, description, price, category, and condition are required",
-        data: null,
-      });
+    if (!title || !price || !category || !condition) {
+  return res.status(400).json({
+    success: false,
+    message: "Title, price, category, and condition are required",
+    data: null,
+  });
     }
 
     if (!whatsappNumber || !/^[0-9]{10}$/.test(whatsappNumber)) {
