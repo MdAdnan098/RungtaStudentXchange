@@ -30,3 +30,8 @@ export const deleteAvatar = () => axiosInstance.delete(ENDPOINTS.USERS.AVATAR);
 // allowing the change); entirely separate from updateProfile.
 export const changePassword = ({ currentPassword, newPassword }) =>
   axiosInstance.put(ENDPOINTS.USERS.CHANGE_PASSWORD, { currentPassword, newPassword });
+
+// PATCH /users/me/revoke-verification — user manually removes their
+// own Verified Student badge (self-service equivalent of the admin's
+// revokeStudentVerification action).
+export const revokeMyVerification = () => axiosInstance.patch(ENDPOINTS.USERS.REVOKE_VERIFICATION);

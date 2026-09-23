@@ -10,6 +10,7 @@ import {
   removeFromWishlist,
   getMyListings,
   deleteMyAccount,
+  revokeMyVerification,
 } from "../controllers/userController.js";
 import { protect, checkBanned } from "../middleware/authMiddleware.js";
 
@@ -27,6 +28,7 @@ router.delete("/me/avatar", protect, deleteAvatar);
 router.put("/me/password", protect, checkBanned, changePassword);
 
 router.put("/me", protect, checkBanned, updateProfile);
+router.patch("/me/revoke-verification", protect, revokeMyVerification);
 router.delete("/me", protect, deleteMyAccount);
 
 router.get("/:id", getUserById);

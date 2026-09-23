@@ -31,6 +31,7 @@ export const ENDPOINTS = {
     AVATAR: "/users/me/avatar",
     CHANGE_PASSWORD: "/users/me/password",
     PROFILE: "/users/me",
+    REVOKE_VERIFICATION: "/users/me/revoke-verification",
     BY_ID: (id) => `/users/${id}`,
   },
 

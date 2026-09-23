@@ -391,3 +391,38 @@ export const deleteMyAccount = async (req, res) => {
     });
   }
 };
+
+
+// @desc    Revoke your own student verification
+// @route   PATCH /api/users/me/revoke-verification
+// @access  Private
+export const revokeMyVerification = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+        data: null,
+      });
+    }
+
+    user.isStudentVerified = false;
+    user.studentEmail = null;
+    user.studentVerifiedAt = null;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Student verification revoked successfully",
+      data: { user },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to revoke verification",
+      data: null,
+    });
+  }
+};

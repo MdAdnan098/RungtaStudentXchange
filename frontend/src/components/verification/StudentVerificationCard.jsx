@@ -4,12 +4,14 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { AlertTriangle, BadgeCheck, ShieldCheck } from "lucide-react";
 import { sendOtp, verifyOtp, resendOtp } from "@/api/otp";
+import { revokeMyVerification } from "@/api/users";
 import { useAuthStore } from "@/store/authStore";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { rungtaEmailRule } from "@/utils/validationRules";
 import TextField from "@/components/auth/TextField";
 import FormError from "@/components/auth/FormError";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import Modal, { ModalHeader } from "@/components/common/Modal";
 
 const RESEND_COOLDOWN_S = 30;
 
@@ -42,6 +44,8 @@ const StudentVerificationCard = () => {
   const [submitError, setSubmitError] = useState(null);
   const [sentToEmail, setSentToEmail] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
+const [isRevoking, setIsRevoking] = useState(false);
 
   const emailForm = useForm({ mode: "onBlur" });
   const otpForm = useForm({ mode: "onBlur" });
@@ -94,6 +98,20 @@ const StudentVerificationCard = () => {
     }
   };
 
+  const handleRevoke = async () => {
+  setIsRevoking(true);
+  try {
+    const response = await revokeMyVerification();
+    setUser(response.data.data.user);
+    toast.success("Verification removed.");
+    setShowRevokeConfirm(false);
+  } catch (error) {
+    toast.error(getErrorMessage(error, "Failed to remove verification. Please try again."));
+  } finally {
+    setIsRevoking(false);
+  }
+};
+
   // ── Guest (not logged in) ───────────────────────────────────────
   if (!isAuthenticated) {
     return (
@@ -135,7 +153,45 @@ const StudentVerificationCard = () => {
             🎉 RungtaStudentXchange ko sabke liye ek trusted marketplace banane mein tumhari yeh help bahut
             matter karti hai. Shukriya!
           </p>
+
+          <button
+            type="button"
+            onClick={() => setShowRevokeConfirm(true)}
+            className="mt-4 text-body-sm text-text-muted hover:text-danger-text transition-colors duration-base ease-standard"
+          >
+            Remove verification
+          </button>
         </div>
+
+        <Modal isOpen={showRevokeConfirm} onClose={() => setShowRevokeConfirm(false)} titleId="revoke-verify-title">
+          <ModalHeader
+            titleId="revoke-verify-title"
+            title="Remove your Verified Student badge?"
+            onClose={() => setShowRevokeConfirm(false)}
+          />
+          <p className="text-body-sm text-text-muted">
+            You'll lose the Verified badge and need to re-verify with your Rungta email again later if you want it back.
+          </p>
+          <div className="mt-6 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setShowRevokeConfirm(false)}
+              className="btn-ghost !rounded-xl btn-tactile"
+              disabled={isRevoking}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleRevoke}
+              className="btn-danger !rounded-xl shadow-sm btn-tactile hover:shadow-md"
+              disabled={isRevoking}
+            >
+              {isRevoking && <LoadingSpinner size="sm" />}
+              {isRevoking ? "Removing…" : "Remove verification"}
+            </button>
+          </div>
+        </Modal>
       </div>
     );
   }
