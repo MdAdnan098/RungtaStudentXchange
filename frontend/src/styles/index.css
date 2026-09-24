@@ -350,12 +350,13 @@
     from 0deg,
     transparent 0deg,
     transparent 240deg,
-    #ff2fd3 260deg,
-    #00e5ff 290deg,
-    #2979ff 320deg,
+    #ff00ff 260deg,
+    #00ffff 290deg,
+    #0080ff 320deg,
     transparent 340deg,
     transparent 360deg
   );
+  filter: saturate(1.6) brightness(1.3);
   animation: neon-border-spin 4s linear infinite;
   z-index: 0;
 }
