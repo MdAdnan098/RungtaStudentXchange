@@ -1,6 +1,6 @@
 import { Clock, MapPin } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
-import { formatRelativeTime } from "@/utils/formatRelativeTime";
+import RelativeTime from "@/components/common/RelativeTime";
 import { CONDITION_BADGE_CLASS } from "@/constants/conditionBadges";
 
 // Product.status ("active" | "sold" | "removed") is the closest thing
@@ -38,7 +38,7 @@ const ProductInfoPanel = ({ product, children }) => {
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-muted">
         <span className="inline-flex items-center gap-1">
           <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-          Posted {formatRelativeTime(product.createdAt)}
+          Posted <RelativeTime date={product.createdAt} />
         </span>
         {product.location && (
           <span className="inline-flex items-center gap-1">

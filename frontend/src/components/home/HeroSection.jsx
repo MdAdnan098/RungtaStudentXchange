@@ -19,7 +19,7 @@ const HeroSection = () => {
           <div className="max-w-xl">
             <h1
               id="hero-heading"
-              className="text-balance text-h1 sm:text-display-2"
+              className="neon-sweep-text text-balance text-h1 sm:text-display-2"
             >
               Sell your unused stuff. Buy what you need.
             </h1>

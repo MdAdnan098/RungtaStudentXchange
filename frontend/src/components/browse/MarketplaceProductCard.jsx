@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, BadgeCheck, ImageOff } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
-import { formatRelativeTime } from "@/utils/formatRelativeTime";
+import RelativeTime from "@/components/common/RelativeTime";
 import { CONDITION_BADGE_CLASS } from "@/constants/conditionBadges";
 import { STATUS_BADGE_CLASS, STATUS_LABEL } from "@/constants/statusBadges";
 import { cn } from "@/utils/cn";
@@ -104,7 +104,7 @@ const MarketplaceProductCard = ({ product, isWishlisted, onToggleWishlist, showS
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-1.5 text-[0.65rem] text-text-muted">
           <span className="min-w-0 truncate">{product.seller?.name}</span>
-          <span className="shrink-0">{formatRelativeTime(product.createdAt)}</span>
+          <RelativeTime date={product.createdAt} className="shrink-0" />
         </div>
       </div>
     </div>
