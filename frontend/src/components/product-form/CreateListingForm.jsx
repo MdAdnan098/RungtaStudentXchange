@@ -127,41 +127,28 @@ const CreateListingForm = ({ onSuccess }) => {
 
     setImagesError(null);
     setSubmitError(null);
+    setUploadProgress(0);
 
-    const attemptUpload = async () => {
-      setUploadProgress(0);
-
+    try {
+      // Each uploadToImageKit() call already retries 3 times internally
+      // (see uploadWithRetry in uploadToImageKit.js). Re-uploading the
+      // whole batch again on top of that was redundant — it doubled
+      // upload time and, with 3-4 images going out together, actually
+      // increased the odds of a fresh failure instead of fixing one.
       const uploadedImages = await Promise.all(
         images.map((image) => uploadToImageKit(image.file, "products"))
       );
 
       const payload = buildProductPayload(values, uploadedImages, "create");
-
-      return createProduct(payload);
-    };
-
-    try {
-      const response = await attemptUpload();
+      const response = await createProduct(payload);
 
       toast.success(response.data.message || "Listing created");
       onSuccess(response.data.data.product);
     } catch (error) {
       if (!error.response) {
-        try {
-          const retryResponse = await attemptUpload();
-
-          toast.success(retryResponse.data.message || "Listing created");
-          onSuccess(retryResponse.data.data.product);
-          return;
-        } catch (retryError) {
-          if (!retryError.response) {
-            setSubmitError(
-              "Sorry! Image upload complete nahi ho paya. Bas image ko remove karke wahi image dobara select kare. Form dobara bharne ki zarurat nahi hai."
-            );
-          } else {
-            setSubmitError(getErrorMessage(retryError, "Failed to create listing"));
-          }
-        }
+        setSubmitError(
+          "Sorry! Image upload complete nahi ho paya. Bas image ko remove karke wahi image dobara select kare. Form dobara bharne ki zarurat nahi hai."
+        );
       } else {
         setSubmitError(getErrorMessage(error, "Failed to create listing"));
       }

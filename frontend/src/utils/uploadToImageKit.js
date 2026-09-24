@@ -103,10 +103,10 @@ const getUploadAuthWithRetry = async () => {
   throw lastError;
 };
 export const uploadToImageKit = async (file, folder = "rungtastudentxchange") => {
+  const compressed = await compressImage(file);
+
   const authResponse = await getUploadAuthWithRetry();
   const { signature, token, expire, publicKey, urlEndpoint } = authResponse.data.data;
-
-  const compressed = await compressImage(file);
 
   const formData = new FormData();
   formData.append("file", compressed);
