@@ -16,7 +16,7 @@ const EmptyState = ({ icon: Icon, title, description, action, className }) => {
       )}
     >
       {Icon && (
-        <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-background-subtle text-text-muted">
+        <span className="icon-float mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-background-subtle text-text-muted">
           <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
       )}

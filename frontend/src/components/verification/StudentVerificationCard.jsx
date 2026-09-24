@@ -141,7 +141,7 @@ const [isRevoking, setIsRevoking] = useState(false);
   if (user?.isStudentVerified) {
     return (
       <div className="card-padded flex items-start gap-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-subtle text-success-text">
+        <span className="badge-pulse flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-subtle text-success-text">
           <BadgeCheck className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
