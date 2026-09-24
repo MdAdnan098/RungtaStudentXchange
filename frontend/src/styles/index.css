@@ -410,7 +410,7 @@
   background-position: -75% 0, 0 0;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: neon-sweep 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation: neon-sweep 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
 @keyframes neon-sweep {
