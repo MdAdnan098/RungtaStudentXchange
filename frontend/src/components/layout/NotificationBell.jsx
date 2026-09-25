@@ -180,6 +180,15 @@ const NotificationBell = () => {
               ))
             )}
           </div>
+
+          {notifications.length > 0 && (
+            <>
+              <div className="divider" />
+              <p className="px-3 py-2 text-center text-caption text-text-muted">
+                Notifications are automatically removed after 7 days.
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>

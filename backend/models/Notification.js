@@ -40,6 +40,7 @@ const notificationSchema = new mongoose.Schema(
 );
 
 notificationSchema.index({ recipient: 1, createdAt: -1 });
+notificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 7 * 24 * 60 * 60 }); // auto-delete after 7 days
 
 const Notification = mongoose.model("Notification", notificationSchema);
 
